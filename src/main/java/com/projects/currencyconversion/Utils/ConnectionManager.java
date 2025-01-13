@@ -40,7 +40,7 @@ public final class ConnectionManager {
         pool = new ArrayBlockingQueue<>(size);
         sourceConnections = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            Connection connection = open();
+            Connection connection = openConnection();
             Connection proxyConnection = (Connection) Proxy.newProxyInstance(
                     ConnectionManager.class.getClassLoader(),
                     new Class[]{Connection.class},
@@ -60,13 +60,14 @@ public final class ConnectionManager {
         }
     }
 
-    private static Connection open() {
+    private static Connection openConnection() {
         try {
             return DriverManager.getConnection(PropertiesConnectionUtil.get(URL_KEY));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
 
     public static void closePool() {
         try {
