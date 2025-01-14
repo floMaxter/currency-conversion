@@ -8,7 +8,7 @@ public final class PropertiesConnectionUtil {
 
     private static final String APPLICATION_PROPERTIES_FILE_NAME = "application.properties";
 
-    private static Properties PROPERTIES = new Properties();
+    private static final Properties PROPERTIES = new Properties();
 
     static {
         loadProperties();

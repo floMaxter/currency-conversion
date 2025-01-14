@@ -68,7 +68,6 @@ public final class ConnectionManager {
         }
     }
 
-
     public static void closePool() {
         try {
             for (Connection connection : sourceConnections) {

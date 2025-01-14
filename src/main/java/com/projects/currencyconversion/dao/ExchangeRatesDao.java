@@ -3,7 +3,10 @@ package com.projects.currencyconversion.dao;
 import com.projects.currencyconversion.Utils.ConnectionManager;
 import com.projects.currencyconversion.entity.ExchangeRates;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -54,8 +57,16 @@ public class ExchangeRatesDao implements Dao<Long, ExchangeRates> {
 
     @Override
     public ExchangeRates save(ExchangeRates exchangeRates) {
-        try (Connection connection = ConnectionManager.get();
-             PreparedStatement preparedStatement = connection.prepareStatement(SAVE_SQL, PreparedStatement.RETURN_GENERATED_KEYS)) {
+        try (Connection connection = ConnectionManager.get()) {
+            return save(exchangeRates, connection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ExchangeRates save(ExchangeRates exchangeRates, Connection connection) {
+        try (PreparedStatement preparedStatement =
+                     connection.prepareStatement(SAVE_SQL, PreparedStatement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setLong(1, exchangeRates.getBaseCurrency().getId());
             preparedStatement.setLong(2, exchangeRates.getTargetCurrency().getId());
             preparedStatement.setDouble(3, exchangeRates.getRate());
@@ -74,8 +85,15 @@ public class ExchangeRatesDao implements Dao<Long, ExchangeRates> {
 
     @Override
     public List<ExchangeRates> findAll() {
-        try (Connection connection = ConnectionManager.get();
-             PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL)) {
+        try (Connection connection = ConnectionManager.get()) {
+            return findAll(connection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<ExchangeRates> findAll(Connection connection) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL)) {
             List<ExchangeRates> exchangeRates = new ArrayList<>();
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -89,8 +107,15 @@ public class ExchangeRatesDao implements Dao<Long, ExchangeRates> {
 
     @Override
     public Optional<ExchangeRates> findById(Long id) {
-        try (Connection connection = ConnectionManager.get();
-             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL)) {
+        try (Connection connection = ConnectionManager.get()) {
+            return findById(id, connection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Optional<ExchangeRates> findById(Long id, Connection connection) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL)) {
             preparedStatement.setLong(1, id);
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -116,8 +141,15 @@ public class ExchangeRatesDao implements Dao<Long, ExchangeRates> {
 
     @Override
     public void update(ExchangeRates exchangeRates) {
-        try (Connection connection = ConnectionManager.get();
-             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SQL)) {
+        try (Connection connection = ConnectionManager.get()) {
+            update(exchangeRates, connection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void update(ExchangeRates exchangeRates, Connection connection) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SQL)) {
             preparedStatement.setLong(1, exchangeRates.getBaseCurrency().getId());
             preparedStatement.setLong(2, exchangeRates.getTargetCurrency().getId());
             preparedStatement.setDouble(3, exchangeRates.getRate());
@@ -131,8 +163,15 @@ public class ExchangeRatesDao implements Dao<Long, ExchangeRates> {
 
     @Override
     public boolean delete(Long id) {
-        try (Connection connection = ConnectionManager.get();
-             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_SQL)) {
+        try (Connection connection = ConnectionManager.get()) {
+            return delete(id, connection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean delete(Long id, Connection connection) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_SQL)) {
             preparedStatement.setLong(1, id);
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
