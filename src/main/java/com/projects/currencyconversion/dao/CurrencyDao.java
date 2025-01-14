@@ -8,13 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CurrencyDao {
+public class CurrencyDao implements Dao<Long, Currency> {
 
     private static final CurrencyDao INSTANCE = new CurrencyDao();
 
     private static final String SAVE_SQL = """
             INSERT INTO t_currencies (c_code, c_full_name, c_sign)
-            VALUES (?, ?, ?);
+            VALUES (?, ?, ?)
             """;
 
     private static final String FIND_ALL_SQL = """
@@ -37,7 +37,7 @@ public class CurrencyDao {
 
     private static final String DELETE_SQL = """
             DELETE FROM t_currencies
-            WHERE ID = ?;
+            WHERE ID = ?
             """;
 
     private CurrencyDao() {
@@ -47,6 +47,7 @@ public class CurrencyDao {
         return INSTANCE;
     }
 
+    @Override
     public Currency save(Currency currency) {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(SAVE_SQL, Statement.RETURN_GENERATED_KEYS)) {
@@ -66,6 +67,7 @@ public class CurrencyDao {
         }
     }
 
+    @Override
     public List<Currency> findAll() {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL)) {
@@ -80,6 +82,7 @@ public class CurrencyDao {
         }
     }
 
+    @Override
     public Optional<Currency> findById(Long id) {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL)) {
@@ -97,16 +100,15 @@ public class CurrencyDao {
     }
 
     private static Currency buildCurrency(ResultSet resultSet) throws SQLException {
-        Currency findCurrency;
-        findCurrency = new Currency(
+        return new Currency(
                 resultSet.getLong("id"),
                 resultSet.getString("c_code"),
                 resultSet.getString("c_full_name"),
                 resultSet.getString("c_code")
         );
-        return findCurrency;
     }
 
+    @Override
     public void update(Currency currency) {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SQL)) {
@@ -121,6 +123,7 @@ public class CurrencyDao {
         }
     }
 
+    @Override
     public boolean delete(Long id) {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_SQL)) {

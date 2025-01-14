@@ -2,15 +2,68 @@ package com.projects.currencyconversion;
 
 import com.projects.currencyconversion.Utils.ConnectionManager;
 import com.projects.currencyconversion.dao.CurrencyDao;
+import com.projects.currencyconversion.dao.ExchangeRatesDao;
 import com.projects.currencyconversion.entity.Currency;
+import com.projects.currencyconversion.entity.ExchangeRates;
 
 import java.sql.SQLException;
 import java.util.Optional;
 
 public class Main {
     public static void main(String[] args) {
-        saveTest();
-        findAllTest();
+
+    }
+
+    private static void deleteExchangeRatesTest() {
+        ExchangeRatesDao exchangeRatesDao = ExchangeRatesDao.getInstance();
+        var deleteResult = exchangeRatesDao.delete(5L);
+        System.out.println(deleteResult);
+    }
+
+    private static void updateExchangeRatesTest() {
+        ExchangeRatesDao exchangeRatesDao = ExchangeRatesDao.getInstance();
+        Optional<ExchangeRates> optionalExchangeRates = exchangeRatesDao.findById(1L);
+        System.out.println(optionalExchangeRates);
+
+        optionalExchangeRates.ifPresent(exchangeRates -> {
+            exchangeRates.setRate(0.0098);
+            exchangeRatesDao.update(exchangeRates);
+        });
+    }
+
+    private static void findByIdExchangeRates() {
+        ExchangeRatesDao exchangeRatesDao = ExchangeRatesDao.getInstance();
+        Optional<ExchangeRates> optionalExchangeRates = exchangeRatesDao.findById(1L);
+        System.out.println(optionalExchangeRates);
+    }
+
+    private static void findAllExchangeRatesTest() {
+        ExchangeRatesDao exchangeRatesDao = ExchangeRatesDao.getInstance();
+        System.out.println(exchangeRatesDao.findAll());
+    }
+
+    private static void saveTestExchangeRate() {
+        ExchangeRatesDao exchangeRatesDao = ExchangeRatesDao.getInstance();
+
+        Currency currency1 = new Currency();
+        currency1.setId(12L);
+        currency1.setCode("T1");
+        currency1.setFullName("Test1");
+        currency1.setSign("T1");
+
+        Currency currency2 = new Currency();
+        currency2.setId(13L);
+        currency2.setCode("T2");
+        currency2.setFullName("Test2");
+        currency2.setSign("T2");
+
+        ExchangeRates exchangeRates = new ExchangeRates();
+        exchangeRates.setBaseCurrency(currency1);
+        exchangeRates.setTargetCurrency(currency2);
+        exchangeRates.setRate(0.9);
+
+        var savedExchangeRates = exchangeRatesDao.save(exchangeRates);
+        System.out.println(savedExchangeRates);
     }
 
     private static void findAllTest() {
