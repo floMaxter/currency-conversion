@@ -15,6 +15,7 @@
         <maven.compiler.target>21</maven.compiler.target>
         <maven.compiler.source>21</maven.compiler.source>
         <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
+        <jackson-databind.version>2.18.2</jackson-databind.version>
         <sqlite-jdbc.version>3.47.2.0</sqlite-jdbc.version>
         <maven-war-plugin.version>3.4.0</maven-war-plugin.version>
     </properties>
@@ -25,6 +26,12 @@
             <artifactId>jakarta.servlet-api</artifactId>
             <version>${jakarta.servlet-api.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson-databind.version}</version>
         </dependency>
 
         <dependency>

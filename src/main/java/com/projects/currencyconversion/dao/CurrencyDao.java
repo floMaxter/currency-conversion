@@ -2,6 +2,7 @@ package com.projects.currencyconversion.dao;
 
 import com.projects.currencyconversion.Utils.ConnectionManager;
 import com.projects.currencyconversion.entity.Currency;
+import com.sun.security.jgss.GSSUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -31,6 +32,10 @@ public class CurrencyDao implements Dao<Long, Currency> {
 
     private static final String FIND_BY_ID_SQL = FIND_ALL_SQL + """
             WHERE id = ?
+            """;
+
+    private static final String FIND_BY_CODE_SQL = FIND_ALL_SQL + """
+            WHERE c_code = ?
             """;
 
     private static final String UPDATE_SQL = """
@@ -73,6 +78,8 @@ public class CurrencyDao implements Dao<Long, Currency> {
             if (generatedKeys.next()) {
                 currency.setId(generatedKeys.getLong(1));
             }
+            //TODO: remove
+            System.out.println(currency);
             return currency;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -113,6 +120,30 @@ public class CurrencyDao implements Dao<Long, Currency> {
     public Optional<Currency> findById(Long id, Connection connection) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL)) {
             preparedStatement.setLong(1, id);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            Currency findCurrency = null;
+            if (resultSet.next()) {
+                findCurrency = buildCurrency(resultSet);
+            }
+            return Optional.ofNullable(findCurrency);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Optional<Currency> findByCode(String code) {
+        try (Connection connection = ConnectionManager.get()) {
+            return findByCode(code, connection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public Optional<Currency> findByCode(String code, Connection connection) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_CODE_SQL)) {
+            preparedStatement.setString(1, code);
 
             ResultSet resultSet = preparedStatement.executeQuery();
             Currency findCurrency = null;

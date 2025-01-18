@@ -1,0 +1,52 @@
+package com.projects.currencyconversion.servlet;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.projects.currencyconversion.dto.CurrencyRequestDto;
+import com.projects.currencyconversion.dto.CurrencyResponseDto;
+import com.projects.currencyconversion.entity.Currency;
+import com.projects.currencyconversion.service.CurrencyService;
+import com.projects.currencyconversion.service.impl.CurrencyServiceImpl;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+
+@WebServlet("/currencies")
+public class CurrenciesServlet extends HttpServlet {
+
+    private final CurrencyService currencyService = CurrencyServiceImpl.getInstance();
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        resp.setContentType("application/json");
+
+        List<CurrencyResponseDto> currencyDtos = currencyService.findAll();
+        try (PrintWriter writer = resp.getWriter()) {
+            writer.write(objectMapper.writeValueAsString(currencyDtos));
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        resp.setContentType("application/json");
+
+        CurrencyRequestDto currencyRequestDto = CurrencyRequestDto.builder()
+                .name(req.getParameter("name"))
+                .code(req.getParameter("code"))
+                .sign(req.getParameter("sign"))
+                .build();
+        CurrencyResponseDto savedCurrency = currencyService.create(currencyRequestDto);
+        try (PrintWriter writer = resp.getWriter()) {
+            writer.write(objectMapper.writeValueAsString(savedCurrency));
+        }
+    }
+}

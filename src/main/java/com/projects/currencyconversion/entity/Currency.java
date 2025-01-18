@@ -49,6 +49,10 @@ public class Currency {
         this.sign = sign;
     }
 
+    public static CurrencyBuilder builder() {
+        return new CurrencyBuilder();
+    }
+
     @Override
     public String toString() {
         return "Currency{" +
@@ -58,4 +62,37 @@ public class Currency {
                 ", sign='" + sign + '\'' +
                 '}';
     }
+
+    public static class CurrencyBuilder {
+
+        private Long id;
+        private String code;
+        private String fullName;
+        private String sign;
+
+        public CurrencyBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public CurrencyBuilder fullName(String fullName) {
+            this.fullName = fullName;
+            return this;
+        }
+
+        public CurrencyBuilder code(String code) {
+            this.code = code;
+            return this;
+        }
+
+        public CurrencyBuilder sign(String sign) {
+            this.sign = sign;
+            return this;
+        }
+
+        public Currency build() {
+            return new Currency(id, code, fullName, sign);
+        }
+    }
+
 }
