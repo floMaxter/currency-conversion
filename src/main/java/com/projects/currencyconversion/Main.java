@@ -2,9 +2,9 @@ package com.projects.currencyconversion;
 
 import com.projects.currencyconversion.Utils.ConnectionManager;
 import com.projects.currencyconversion.dao.CurrencyDao;
-import com.projects.currencyconversion.dao.ExchangeRatesDao;
+import com.projects.currencyconversion.dao.ExchangeRateDao;
 import com.projects.currencyconversion.entity.Currency;
-import com.projects.currencyconversion.entity.ExchangeRates;
+import com.projects.currencyconversion.entity.ExchangeRate;
 
 import java.sql.SQLException;
 import java.util.Optional;
@@ -15,35 +15,35 @@ public class Main {
     }
 
     private static void deleteExchangeRatesTest() {
-        ExchangeRatesDao exchangeRatesDao = ExchangeRatesDao.getInstance();
-        var deleteResult = exchangeRatesDao.delete(5L);
+        ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
+        var deleteResult = exchangeRateDao.delete(5L);
         System.out.println(deleteResult);
     }
 
     private static void updateExchangeRatesTest() {
-        ExchangeRatesDao exchangeRatesDao = ExchangeRatesDao.getInstance();
-        Optional<ExchangeRates> optionalExchangeRates = exchangeRatesDao.findById(1L);
+        ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
+        Optional<ExchangeRate> optionalExchangeRates = exchangeRateDao.findById(1L);
         System.out.println(optionalExchangeRates);
 
         optionalExchangeRates.ifPresent(exchangeRates -> {
             exchangeRates.setRate(0.0098);
-            exchangeRatesDao.update(exchangeRates);
+            exchangeRateDao.update(exchangeRates);
         });
     }
 
     private static void findByIdExchangeRates() {
-        ExchangeRatesDao exchangeRatesDao = ExchangeRatesDao.getInstance();
-        Optional<ExchangeRates> optionalExchangeRates = exchangeRatesDao.findById(1L);
+        ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
+        Optional<ExchangeRate> optionalExchangeRates = exchangeRateDao.findById(1L);
         System.out.println(optionalExchangeRates);
     }
 
     private static void findAllExchangeRatesTest() {
-        ExchangeRatesDao exchangeRatesDao = ExchangeRatesDao.getInstance();
-        System.out.println(exchangeRatesDao.findAll());
+        ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
+        System.out.println(exchangeRateDao.findAll());
     }
 
     private static void saveTestExchangeRate() {
-        ExchangeRatesDao exchangeRatesDao = ExchangeRatesDao.getInstance();
+        ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
 
         Currency currency1 = new Currency();
         currency1.setId(12L);
@@ -57,12 +57,12 @@ public class Main {
         currency2.setFullName("Test2");
         currency2.setSign("T2");
 
-        ExchangeRates exchangeRates = new ExchangeRates();
-        exchangeRates.setBaseCurrency(currency1);
-        exchangeRates.setTargetCurrency(currency2);
-        exchangeRates.setRate(0.9);
+        ExchangeRate exchangeRate = new ExchangeRate();
+        exchangeRate.setBaseCurrency(currency1);
+        exchangeRate.setTargetCurrency(currency2);
+        exchangeRate.setRate(0.9);
 
-        var savedExchangeRates = exchangeRatesDao.save(exchangeRates);
+        var savedExchangeRates = exchangeRateDao.save(exchangeRate);
         System.out.println(savedExchangeRates);
     }
 

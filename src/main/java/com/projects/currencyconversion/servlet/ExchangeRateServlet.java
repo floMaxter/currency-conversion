@@ -1,8 +1,8 @@
 package com.projects.currencyconversion.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.projects.currencyconversion.dto.ExchangeRatesResponseDto;
-import com.projects.currencyconversion.service.impl.ExchangeRatesServiceImpl;
+import com.projects.currencyconversion.dto.ExchangeRateResponseDto;
+import com.projects.currencyconversion.service.impl.ExchangeRateServiceImpl;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,9 +14,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @WebServlet("/exchangeRates")
-public class ExchangeRatesServlet extends HttpServlet {
+public class ExchangeRateServlet extends HttpServlet {
 
-    private final ExchangeRatesServiceImpl exchangeRatesService = ExchangeRatesServiceImpl.getInstance();
+    private final ExchangeRateServiceImpl exchangeRateService = ExchangeRateServiceImpl.getInstance();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -24,7 +24,7 @@ public class ExchangeRatesServlet extends HttpServlet {
         resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
         resp.setContentType("application/json");
 
-        List<ExchangeRatesResponseDto> findExchangeRates = exchangeRatesService.findAll();
+        List<ExchangeRateResponseDto> findExchangeRates = exchangeRateService.findAll();
         try (PrintWriter writer = resp.getWriter()) {
             writer.write(objectMapper.writeValueAsString(findExchangeRates));
         }

@@ -5,9 +5,8 @@ import com.projects.currencyconversion.entity.Currency;
 import com.projects.currencyconversion.mapper.EntityToDtoMapper;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
 
 public class CurrencyResponseMapper implements EntityToDtoMapper<Currency, CurrencyResponseDto> {
 

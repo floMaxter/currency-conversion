@@ -1,16 +1,16 @@
 package com.projects.currencyconversion.entity;
 
-public class ExchangeRates {
+public class ExchangeRate {
 
     private Long id;
     private Currency baseCurrency;
     private Currency targetCurrency;
     private Double rate;
 
-    public ExchangeRates() {
+    public ExchangeRate() {
     }
 
-    public ExchangeRates(Long id, Currency baseCurrency, Currency targetCurrency, Double rate) {
+    public ExchangeRate(Long id, Currency baseCurrency, Currency targetCurrency, Double rate) {
         this.id = id;
         this.baseCurrency = baseCurrency;
         this.targetCurrency = targetCurrency;
@@ -49,13 +49,13 @@ public class ExchangeRates {
         this.rate = rate;
     }
 
-    public static ExchangeRatesBuilder builder() {
-        return new ExchangeRatesBuilder();
+    public static ExchangeRateBuilder builder() {
+        return new ExchangeRateBuilder();
     }
 
     @Override
     public String toString() {
-        return "ExchangeRates{" +
+        return "ExchangeRate{" +
                "id=" + id +
                ", baseCurrency=" + baseCurrency +
                ", targetCurrency=" + targetCurrency +
@@ -63,35 +63,35 @@ public class ExchangeRates {
                '}';
     }
 
-    public static class ExchangeRatesBuilder {
+    public static class ExchangeRateBuilder {
 
         private Long id;
         private Currency baseCurrency;
         private Currency targetCurrency;
         private Double rate;
 
-        public ExchangeRatesBuilder id(Long id) {
+        public ExchangeRateBuilder id(Long id) {
             this.id = id;
             return this;
         }
 
-        public ExchangeRatesBuilder baseCurrency(Currency baseCurrency) {
+        public ExchangeRateBuilder baseCurrency(Currency baseCurrency) {
             this.baseCurrency = baseCurrency;
             return this;
         }
 
-        public ExchangeRatesBuilder targetCurrency(Currency targetCurrency) {
+        public ExchangeRateBuilder targetCurrency(Currency targetCurrency) {
             this.targetCurrency = targetCurrency;
             return this;
         }
 
-        public ExchangeRatesBuilder rate(Double rate) {
+        public ExchangeRateBuilder rate(Double rate) {
             this.rate = rate;
             return this;
         }
 
-        public ExchangeRates build() {
-            return new ExchangeRates(id, baseCurrency, targetCurrency, rate);
+        public ExchangeRate build() {
+            return new ExchangeRate(id, baseCurrency, targetCurrency, rate);
         }
     }
 }
