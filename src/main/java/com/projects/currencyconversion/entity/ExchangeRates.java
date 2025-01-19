@@ -49,6 +49,10 @@ public class ExchangeRates {
         this.rate = rate;
     }
 
+    public static ExchangeRatesBuilder builder() {
+        return new ExchangeRatesBuilder();
+    }
+
     @Override
     public String toString() {
         return "ExchangeRates{" +
@@ -57,5 +61,37 @@ public class ExchangeRates {
                ", targetCurrency=" + targetCurrency +
                ", rate=" + rate +
                '}';
+    }
+
+    public static class ExchangeRatesBuilder {
+
+        private Long id;
+        private Currency baseCurrency;
+        private Currency targetCurrency;
+        private Double rate;
+
+        public ExchangeRatesBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public ExchangeRatesBuilder baseCurrency(Currency baseCurrency) {
+            this.baseCurrency = baseCurrency;
+            return this;
+        }
+
+        public ExchangeRatesBuilder targetCurrency(Currency targetCurrency) {
+            this.targetCurrency = targetCurrency;
+            return this;
+        }
+
+        public ExchangeRatesBuilder rate(Double rate) {
+            this.rate = rate;
+            return this;
+        }
+
+        public ExchangeRates build() {
+            return new ExchangeRates(id, baseCurrency, targetCurrency, rate);
+        }
     }
 }

@@ -2,7 +2,6 @@ package com.projects.currencyconversion.dao;
 
 import com.projects.currencyconversion.Utils.ConnectionManager;
 import com.projects.currencyconversion.entity.Currency;
-import com.sun.security.jgss.GSSUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -78,8 +77,6 @@ public class CurrencyDao implements Dao<Long, Currency> {
             if (generatedKeys.next()) {
                 currency.setId(generatedKeys.getLong(1));
             }
-            //TODO: remove
-            System.out.println(currency);
             return currency;
         } catch (SQLException e) {
             throw new RuntimeException(e);

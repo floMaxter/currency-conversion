@@ -4,8 +4,8 @@ import com.projects.currencyconversion.dao.CurrencyDao;
 import com.projects.currencyconversion.dto.CurrencyRequestDto;
 import com.projects.currencyconversion.dto.CurrencyResponseDto;
 import com.projects.currencyconversion.entity.Currency;
-import com.projects.currencyconversion.mapper.CurrencyRequestMapper;
-import com.projects.currencyconversion.mapper.CurrencyResponseMapper;
+import com.projects.currencyconversion.mapper.impl.CurrencyRequestMapper;
+import com.projects.currencyconversion.mapper.impl.CurrencyResponseMapper;
 import com.projects.currencyconversion.service.CurrencyService;
 
 import java.util.List;
@@ -28,13 +28,8 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     public List<CurrencyResponseDto> findAll() {
-        return currencyDao.findAll().stream()
-                .map(currency -> new CurrencyResponseDto(
-                        currency.getId(),
-                        currency.getCode(),
-                        currency.getFullName(),
-                        currency.getSign()
-                )).collect(Collectors.toList());
+        List<Currency> findCurrencies = currencyDao.findAll();
+        return currencyResponseMapper.toDto(findCurrencies);
     }
 
     @Override
