@@ -77,6 +77,7 @@ public class CurrencyDao implements Dao<Long, Currency> {
             if (generatedKeys.next()) {
                 currency.setId(generatedKeys.getLong(1));
             }
+
             return currency;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -95,10 +96,12 @@ public class CurrencyDao implements Dao<Long, Currency> {
     public List<Currency> findAll(Connection connection) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
+
             List<Currency> currencies = new ArrayList<>();
             while (resultSet.next()) {
                 currencies.add(buildCurrency(resultSet));
             }
+
             return currencies;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -119,10 +122,12 @@ public class CurrencyDao implements Dao<Long, Currency> {
             preparedStatement.setLong(1, id);
 
             ResultSet resultSet = preparedStatement.executeQuery();
+
             Currency findCurrency = null;
             if (resultSet.next()) {
                 findCurrency = buildCurrency(resultSet);
             }
+
             return Optional.ofNullable(findCurrency);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -143,10 +148,12 @@ public class CurrencyDao implements Dao<Long, Currency> {
             preparedStatement.setString(1, code);
 
             ResultSet resultSet = preparedStatement.executeQuery();
+
             Currency findCurrency = null;
             if (resultSet.next()) {
                 findCurrency = buildCurrency(resultSet);
             }
+
             return Optional.ofNullable(findCurrency);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -163,22 +170,30 @@ public class CurrencyDao implements Dao<Long, Currency> {
     }
 
     @Override
-    public void update(Currency currency) {
+    public Currency update(Currency currency) {
         try (Connection connection = ConnectionManager.get()) {
-            update(currency, connection);
+            return update(currency, connection);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void update(Currency currency, Connection connection) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SQL)) {
+    public Currency update(Currency currency, Connection connection) {
+        try (PreparedStatement preparedStatement
+                     = connection.prepareStatement(UPDATE_SQL, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, currency.getCode());
             preparedStatement.setString(2, currency.getFullName());
             preparedStatement.setString(3, currency.getSign());
             preparedStatement.setLong(4, currency.getId());
 
             preparedStatement.executeUpdate();
+
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                currency.setId(generatedKeys.getLong(1));
+            }
+
+            return currency;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

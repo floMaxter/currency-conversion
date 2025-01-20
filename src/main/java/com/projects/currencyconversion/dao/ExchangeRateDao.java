@@ -172,23 +172,32 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
         );
     }
 
+
     @Override
-    public void update(ExchangeRate exchangeRate) {
+    public ExchangeRate update(ExchangeRate exchangeRate) {
         try (Connection connection = ConnectionManager.get()) {
-            update(exchangeRate, connection);
+            return update(exchangeRate, connection);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void update(ExchangeRate exchangeRate, Connection connection) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SQL)) {
+    public ExchangeRate update(ExchangeRate exchangeRate, Connection connection) {
+        try (PreparedStatement preparedStatement =
+                     connection.prepareStatement(UPDATE_SQL, PreparedStatement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setLong(1, exchangeRate.getBaseCurrency().getId());
             preparedStatement.setLong(2, exchangeRate.getTargetCurrency().getId());
             preparedStatement.setDouble(3, exchangeRate.getRate());
             preparedStatement.setLong(4, exchangeRate.getId());
 
             preparedStatement.executeUpdate();
+
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                exchangeRate.setId(generatedKeys.getLong(1));
+            }
+
+            return exchangeRate;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

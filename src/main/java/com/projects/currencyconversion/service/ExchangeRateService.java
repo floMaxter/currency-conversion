@@ -11,4 +11,6 @@ public interface ExchangeRateService {
     ExchangeRateResponseDto findByCoupleOfCode(String coupleOfCode);
 
     ExchangeRateResponseDto create(ExchangeRateRequestDto exchangeRateRequestDto);
+
+    ExchangeRateResponseDto update(String coupleOfCode, Double newRate);
 }
