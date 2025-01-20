@@ -1,31 +1,35 @@
 package com.projects.currencyconversion.dto;
 
-public record ExchangeRateRequestDto(CurrencyRequestDto baseCurrency,
-                                     CurrencyRequestDto targetCurrency,
+public record ExchangeRateRequestDto(String baseCurrencyCode,
+                                     String targetCurrencyCode,
                                      Double rate) {
+
+    public static ExchangeRateRequestDtoBuilder builder() {
+        return new ExchangeRateRequestDtoBuilder();
+    }
 
     @Override
     public String toString() {
         return "ExchangeRateRequestDto{" +
-               "baseCurrency=" + baseCurrency +
-               ", targetCurrency=" + targetCurrency +
+               "baseCurrencyCode='" + baseCurrencyCode + '\'' +
+               ", targetCurrencyCode='" + targetCurrencyCode + '\'' +
                ", rate=" + rate +
                '}';
     }
 
     public static class ExchangeRateRequestDtoBuilder {
 
-        private CurrencyRequestDto baseCurrency;
-        private CurrencyRequestDto targetCurrency;
+        private String baseCurrencyCode;
+        private String targetCurrencyCode;
         private Double rate;
 
-        public ExchangeRateRequestDtoBuilder baseCurrency(CurrencyRequestDto baseCurrency) {
-            this.baseCurrency = baseCurrency;
+        public ExchangeRateRequestDtoBuilder baseCurrencyCode(String baseCurrency) {
+            this.baseCurrencyCode = baseCurrency;
             return this;
         }
 
-        public ExchangeRateRequestDtoBuilder targetCurrency(CurrencyRequestDto targetCurrency) {
-            this.targetCurrency = targetCurrency;
+        public ExchangeRateRequestDtoBuilder targetCurrencyCode(String targetCurrency) {
+            this.targetCurrencyCode = targetCurrency;
             return this;
         }
 
@@ -35,7 +39,7 @@ public record ExchangeRateRequestDto(CurrencyRequestDto baseCurrency,
         }
 
         public ExchangeRateRequestDto build() {
-            return new ExchangeRateRequestDto(baseCurrency, targetCurrency, rate);
+            return new ExchangeRateRequestDto(baseCurrencyCode, targetCurrencyCode, rate);
         }
     }
 }

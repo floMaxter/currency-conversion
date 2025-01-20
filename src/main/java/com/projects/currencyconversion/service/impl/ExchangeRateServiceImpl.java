@@ -6,6 +6,7 @@ import com.projects.currencyconversion.dto.ExchangeRateRequestDto;
 import com.projects.currencyconversion.dto.ExchangeRateResponseDto;
 import com.projects.currencyconversion.entity.Currency;
 import com.projects.currencyconversion.entity.ExchangeRate;
+import com.projects.currencyconversion.mapper.impl.ExchangeRateRequestMapper;
 import com.projects.currencyconversion.mapper.impl.ExchangeRateResponseMapper;
 import com.projects.currencyconversion.service.ExchangeRateService;
 
@@ -19,6 +20,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     private final ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
     private final CurrencyDao currencyDao = CurrencyDao.getInstance();
     private final ExchangeRateResponseMapper exchangeRateResponseMapper = ExchangeRateResponseMapper.getInstance();
+    private final ExchangeRateRequestMapper exchangeRateRequestMapper = ExchangeRateRequestMapper.getInstance();
 
     private ExchangeRateServiceImpl() {
     }
@@ -62,6 +64,27 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
 
     @Override
     public ExchangeRateResponseDto create(ExchangeRateRequestDto exchangeRateRequestDto) {
-        return null;
+        // Получить exchangeRateRequestDto с полями String вместо Currency
+        // Выполнить запрос в currencyDao findByCode() для base и target Currency
+        // Проверить, что сущности найдены, если нет - кинуть исключение
+        // Записать сущности в сущность ExchangeRate
+        // Произвести сохранение сущности save(exchangeRate)
+        // Вернуть ExchangeRateResponseDto
+
+        Optional<Currency> optionalBaseCurrency = currencyDao.findByCode(exchangeRateRequestDto.baseCurrencyCode());
+        Optional<Currency> optionalTargetCurrency = currencyDao.findByCode(exchangeRateRequestDto.targetCurrencyCode());
+
+        if (optionalBaseCurrency.isPresent() && optionalTargetCurrency.isPresent()) {
+        ExchangeRate exchangeRate = ExchangeRate.builder()
+                .baseCurrency(optionalBaseCurrency.get())
+                .targetCurrency(optionalTargetCurrency.get())
+                .rate(exchangeRateRequestDto.rate())
+                .build();
+
+        ExchangeRate savedExchangeRate = exchangeRateDao.save(exchangeRate);
+        return exchangeRateResponseMapper.toDto(savedExchangeRate);
+        } else {
+            throw new NoSuchElementException();
+        }
     }
 }
