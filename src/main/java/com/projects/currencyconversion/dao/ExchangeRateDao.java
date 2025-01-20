@@ -34,6 +34,10 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
             WHERE id = ?
             """;
 
+    private static final String FIND_BY_COUPLE_OF_CODES_SQL = FIND_ALL_SQL + """
+            WHERE c_base_currency_id = ? AND c_target_currency_id = ?
+            """;
+
     private static final String UPDATE_SQL = """
             UPDATE t_exchange_rates
             SET c_base_currency_id = ?,
@@ -77,6 +81,7 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
             if (generatedKey.next()) {
                 exchangeRate.setId(generatedKey.getLong(1));
             }
+
             return exchangeRate;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -99,6 +104,7 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
             while (resultSet.next()) {
                 exchangeRates.add(buildExchangeRates(resultSet));
             }
+
             return exchangeRates;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -123,6 +129,34 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
             if (resultSet.next()) {
                 findExchangeRate = buildExchangeRates(resultSet);
             }
+
+            return Optional.ofNullable(findExchangeRate);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Optional<ExchangeRate> findByCoupleOfCurrencyId(Long baseCurrencyId, Long targetCurrencyId) {
+        try (Connection connection = ConnectionManager.get()) {
+            return findByCoupleOfCurrencyId(baseCurrencyId, targetCurrencyId, connection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Optional<ExchangeRate> findByCoupleOfCurrencyId(Long baseCurrencyId,
+                                                           Long targetCurrencyId,
+                                                           Connection connection) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_COUPLE_OF_CODES_SQL)) {
+            preparedStatement.setLong(1, baseCurrencyId);
+            preparedStatement.setLong(2, targetCurrencyId);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            ExchangeRate findExchangeRate = null;
+            if (resultSet.next()) {
+                findExchangeRate = buildExchangeRates(resultSet);
+            }
+
             return Optional.ofNullable(findExchangeRate);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -135,7 +169,6 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
                 currencyDao.findById(resultSet.getLong("c_base_currency_id")).orElse(null),
                 currencyDao.findById(resultSet.getLong("c_target_currency_id")).orElse(null),
                 resultSet.getDouble("c_rate")
-
         );
     }
 
