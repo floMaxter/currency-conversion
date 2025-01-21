@@ -7,7 +7,7 @@ public class Currency {
     private String fullName;
     private String sign;
 
-    public Currency() {
+    private Currency() {
     }
 
     public Currency(Long id, String code, String fullName, String sign) {
@@ -94,5 +94,4 @@ public class Currency {
             return new Currency(id, code, fullName, sign);
         }
     }
-
 }

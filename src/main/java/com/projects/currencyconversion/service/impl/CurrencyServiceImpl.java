@@ -10,7 +10,6 @@ import com.projects.currencyconversion.service.CurrencyService;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 public class CurrencyServiceImpl implements CurrencyService {
 

@@ -7,7 +7,7 @@ public class ExchangeRate {
     private Currency targetCurrency;
     private Double rate;
 
-    public ExchangeRate() {
+    private ExchangeRate() {
     }
 
     public ExchangeRate(Long id, Currency baseCurrency, Currency targetCurrency, Double rate) {

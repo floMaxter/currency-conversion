@@ -50,22 +50,25 @@ public class Main {
     private static void saveTestExchangeRate() {
         ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
 
-        Currency currency1 = new Currency();
-        currency1.setId(12L);
-        currency1.setCode("T1");
-        currency1.setFullName("Test1");
-        currency1.setSign("T1");
+        Currency currency1 = Currency.builder()
+                .id(12L)
+                .code("T1")
+                .fullName("Test1")
+                .sign("T1")
+                .build();
 
-        Currency currency2 = new Currency();
-        currency2.setId(13L);
-        currency2.setCode("T2");
-        currency2.setFullName("Test2");
-        currency2.setSign("T2");
+        Currency currency2 = Currency.builder()
+                .id(13L)
+                .code("T2")
+                .fullName("Test2")
+                .sign("T2")
+                .build();
 
-        ExchangeRate exchangeRate = new ExchangeRate();
-        exchangeRate.setBaseCurrency(currency1);
-        exchangeRate.setTargetCurrency(currency2);
-        exchangeRate.setRate(0.9);
+        ExchangeRate exchangeRate = ExchangeRate.builder()
+                .baseCurrency(currency1)
+                .targetCurrency(currency2)
+                .rate(0.9)
+                .build();
 
         var savedExchangeRates = exchangeRateDao.save(exchangeRate);
         System.out.println(savedExchangeRates);
@@ -89,10 +92,11 @@ public class Main {
 
     private static void saveTest() {
         CurrencyDao currencyDao = CurrencyDao.getInstance();
-        Currency currency = new Currency();
-        currency.setCode("EUR");
-        currency.setFullName("Euro");
-        currency.setSign("€");
+        Currency currency = Currency.builder()
+                .code("EUR")
+                .fullName("Euro")
+                .sign("€")
+                .build();
 
         Currency savedCurrency = currencyDao.save(currency);
         System.out.println(savedCurrency);

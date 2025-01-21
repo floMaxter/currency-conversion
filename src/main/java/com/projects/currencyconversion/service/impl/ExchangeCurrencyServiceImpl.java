@@ -1,11 +1,8 @@
 package com.projects.currencyconversion.service.impl;
 
-import com.projects.currencyconversion.dao.CurrencyDao;
-import com.projects.currencyconversion.dao.ExchangeRateDao;
 import com.projects.currencyconversion.dto.ExchangeCurrencyRequestDto;
 import com.projects.currencyconversion.dto.ExchangeCurrencyResponseDto;
 import com.projects.currencyconversion.dto.ExchangeRateResponseDto;
-import com.projects.currencyconversion.entity.ExchangeRate;
 import com.projects.currencyconversion.service.ExchangeCurrencyService;
 import com.projects.currencyconversion.service.ExchangeRateService;
 
