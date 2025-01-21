@@ -35,6 +35,7 @@ public class CurrenciesServlet extends HttpServlet {
                 .code(req.getParameter("code"))
                 .sign(req.getParameter("sign"))
                 .build();
+
         CurrencyResponseDto savedCurrency = currencyService.create(currencyRequestDto);
         try (PrintWriter writer = resp.getWriter()) {
             writer.write(objectMapper.writeValueAsString(savedCurrency));

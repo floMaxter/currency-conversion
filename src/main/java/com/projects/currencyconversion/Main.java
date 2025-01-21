@@ -7,16 +7,11 @@ import com.projects.currencyconversion.entity.Currency;
 import com.projects.currencyconversion.entity.ExchangeRate;
 
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Optional;
 
 public class Main {
     public static void main(String[] args) {
 
-        String[] strings = {"1000"};
-        String testValue = strings[0];
-        Double value = Double.valueOf(testValue);
-        System.out.println(value);
     }
 
     private static void deleteExchangeRatesTest() {

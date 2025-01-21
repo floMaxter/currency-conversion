@@ -35,7 +35,7 @@ public final class ConnectionManager {
     }
 
     private static void initConnectionPool() {
-        String poolSize = PropertiesConnectionUtil.get(POOL_SIZE_KEY);
+        String poolSize = PropertiesUtil.get(POOL_SIZE_KEY);
         int size = poolSize == null ? DEFAULT_POOL_SIZE : Integer.parseInt(poolSize);
         pool = new ArrayBlockingQueue<>(size);
         sourceConnections = new ArrayList<>();
@@ -62,7 +62,7 @@ public final class ConnectionManager {
 
     private static Connection openConnection() {
         try {
-            return DriverManager.getConnection(PropertiesConnectionUtil.get(URL_KEY));
+            return DriverManager.getConnection(PropertiesUtil.get(URL_KEY));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

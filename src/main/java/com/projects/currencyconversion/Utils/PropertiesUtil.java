@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public final class PropertiesConnectionUtil {
+public final class PropertiesUtil {
 
     private static final String APPLICATION_PROPERTIES_FILE_NAME = "application.properties";
 
@@ -14,7 +14,7 @@ public final class PropertiesConnectionUtil {
         loadProperties();
     }
 
-    private PropertiesConnectionUtil() {
+    private PropertiesUtil() {
     }
 
     public static String get(String key) {
@@ -22,7 +22,7 @@ public final class PropertiesConnectionUtil {
     }
 
     private static void loadProperties() {
-        try (InputStream resourceAsStream = PropertiesConnectionUtil.class.getClassLoader()
+        try (InputStream resourceAsStream = PropertiesUtil.class.getClassLoader()
                 .getResourceAsStream(APPLICATION_PROPERTIES_FILE_NAME)) {
             PROPERTIES.load(resourceAsStream);
         } catch (IOException e) {
