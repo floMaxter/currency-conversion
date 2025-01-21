@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -24,9 +23,6 @@ public class ExchangeCurrencyServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        resp.setContentType("application/json");
-
         Map<String, String[]> params = req.getParameterMap();
         String baseCurrencyCode = Arrays.stream(params.get("from")).toList().get(0);
         String targetCurrencyCode = Arrays.stream(params.get("to")).toList().get(0);

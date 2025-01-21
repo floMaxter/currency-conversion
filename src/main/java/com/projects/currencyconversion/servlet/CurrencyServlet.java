@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 
 import static com.projects.currencyconversion.Utils.RequestUtils.getPathFromRequest;
 
@@ -23,8 +22,6 @@ public class CurrencyServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        resp.setContentType("application/json");
         String code = getPathFromRequest(req);
 
         CurrencyResponseDto findCurrencyDto = currencyService.findByCode(code);

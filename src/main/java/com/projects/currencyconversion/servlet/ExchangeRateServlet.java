@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @WebServlet("/exchangeRate/*")
@@ -23,9 +22,6 @@ public class ExchangeRateServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        resp.setContentType("application/json");
-
         String coupleOfCode = RequestUtils.getPathFromRequest(req);
         ExchangeRateResponseDto exchangeRateResponseDto = exchangeRateService.findByCoupleOfCode(coupleOfCode);
         try (PrintWriter writer = resp.getWriter()) {
@@ -35,9 +31,6 @@ public class ExchangeRateServlet extends HttpServlet {
 
     @Override
     protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        resp.setContentType("application/json");
-
         String coupleOfCode = RequestUtils.getPathFromRequest(req);
         try (PrintWriter writer = resp.getWriter()) {
             Map<String, String> params =  RequestUtils.getParamsFromRequestBody(req);

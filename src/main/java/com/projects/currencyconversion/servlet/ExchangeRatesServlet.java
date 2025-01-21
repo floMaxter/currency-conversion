@@ -13,7 +13,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @WebServlet("/exchangeRates")
@@ -24,9 +23,6 @@ public class ExchangeRatesServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        resp.setContentType("application/json");
-
         List<ExchangeRateResponseDto> findExchangeRates = exchangeRateService.findAll();
         try (PrintWriter writer = resp.getWriter()) {
             writer.write(objectMapper.writeValueAsString(findExchangeRates));
@@ -34,10 +30,7 @@ public class ExchangeRatesServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        resp.setContentType("application/json");
-
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         ExchangeRateRequestDto exchangeRateRequestDto = ExchangeRateRequestDto.builder()
                 .baseCurrencyCode(req.getParameter("baseCurrencyCode"))
                 .targetCurrencyCode(req.getParameter("targetCurrencyCode"))

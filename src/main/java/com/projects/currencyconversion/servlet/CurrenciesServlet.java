@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @WebServlet("/currencies")
@@ -23,9 +22,6 @@ public class CurrenciesServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        resp.setContentType("application/json");
-
         List<CurrencyResponseDto> currencyDtos = currencyService.findAll();
         try (PrintWriter writer = resp.getWriter()) {
             writer.write(objectMapper.writeValueAsString(currencyDtos));
@@ -34,9 +30,6 @@ public class CurrenciesServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        resp.setContentType("application/json");
-
         CurrencyRequestDto currencyRequestDto = CurrencyRequestDto.builder()
                 .name(req.getParameter("name"))
                 .code(req.getParameter("code"))
