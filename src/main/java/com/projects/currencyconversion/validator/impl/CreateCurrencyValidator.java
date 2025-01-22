@@ -6,34 +6,31 @@ import com.projects.currencyconversion.validator.ValidationError;
 import com.projects.currencyconversion.validator.ValidationResult;
 import com.projects.currencyconversion.validator.Validator;
 
-import java.util.regex.Pattern;
-
 public class CreateCurrencyValidator implements Validator<CurrencyRequestDto> {
 
     private static final CreateCurrencyValidator INSTANCE = new CreateCurrencyValidator();
+    private final CurrencyCodeValidator currencyCodeValidator = CurrencyCodeValidator.getInstance();
+
+    private CreateCurrencyValidator() {
+    }
 
     @Override
     public ValidationResult isValid(CurrencyRequestDto object) {
         ValidationResult validationResult = new ValidationResult();
 
-        if (!isValidCode(object.code())) {
-            validationResult.add(ValidationError.of("invalid.code",
-                    "The " + object.code() + " code is invalid"));
+        ValidationResult codeValidationResult = currencyCodeValidator.isValid(object.code());
+        if (!codeValidationResult.isValid()) {
+            validationResult.add(codeValidationResult.getErrors());
         }
         if (!isValidCurrencyName(object.name())) {
             validationResult.add(ValidationError.of("invalid.name",
-                    "The " + object.name() + " name is invalid"));
+                    "The \"" + object.name() + "\" name is invalid"));
         }
         if (!isValidCurrencySign(object.sign())) {
             validationResult.add(ValidationError.of("invalid.sign",
-                    "The " + object.sign() + " sign is invalid"));
+                    "The \"" + object.sign() + "\" sign is invalid"));
         }
         return validationResult;
-    }
-
-    private boolean isValidCode(String code) {
-        int numberOfChar = Integer.parseInt(PropertiesUtil.get("db.currency.code.length"));
-        return code != null && Pattern.matches("[A-Z]{" + numberOfChar + "}", code);
     }
 
     private boolean isValidCurrencyName(String name) {

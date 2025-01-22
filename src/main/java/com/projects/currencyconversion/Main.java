@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public class Main {
     public static void main(String[] args) {
-
+        System.out.println(Double.parseDouble("12e5"));
     }
 
     private static void deleteExchangeRatesTest() {

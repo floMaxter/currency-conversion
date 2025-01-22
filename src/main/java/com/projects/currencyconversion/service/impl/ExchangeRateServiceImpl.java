@@ -9,6 +9,8 @@ import com.projects.currencyconversion.entity.ExchangeRate;
 import com.projects.currencyconversion.mapper.impl.ExchangeRateRequestMapper;
 import com.projects.currencyconversion.mapper.impl.ExchangeRateResponseMapper;
 import com.projects.currencyconversion.service.ExchangeRateService;
+import com.projects.currencyconversion.validator.ValidationResult;
+import com.projects.currencyconversion.validator.impl.CreateExchangeRateValidator;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -21,6 +23,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     private final CurrencyDao currencyDao = CurrencyDao.getInstance();
     private final ExchangeRateResponseMapper exchangeRateResponseMapper = ExchangeRateResponseMapper.getInstance();
     private final ExchangeRateRequestMapper exchangeRateRequestMapper = ExchangeRateRequestMapper.getInstance();
+    private final CreateExchangeRateValidator createExchangeRateValidator = CreateExchangeRateValidator.getInstance();
 
     private ExchangeRateServiceImpl() {
     }
@@ -71,6 +74,11 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         // Произвести сохранение сущности save(exchangeRate)
         // Вернуть ExchangeRateResponseDto
 
+        ValidationResult validationResult = createExchangeRateValidator.isValid(exchangeRateRequestDto);
+        if (!validationResult.isValid()) {
+            throw new RuntimeException(String.valueOf(validationResult.getErrors()));
+        }
+
         Optional<Currency> optionalBaseCurrency = currencyDao.findByCode(exchangeRateRequestDto.baseCurrencyCode());
         Optional<Currency> optionalTargetCurrency = currencyDao.findByCode(exchangeRateRequestDto.targetCurrencyCode());
 
@@ -78,7 +86,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
             ExchangeRate exchangeRate = ExchangeRate.builder()
                     .baseCurrency(optionalBaseCurrency.get())
                     .targetCurrency(optionalTargetCurrency.get())
-                    .rate(exchangeRateRequestDto.rate())
+                    .rate(Double.valueOf(exchangeRateRequestDto.rate()))
                     .build();
 
             ExchangeRate savedExchangeRate = exchangeRateDao.save(exchangeRate);

@@ -5,7 +5,6 @@ import com.projects.currencyconversion.dto.ExchangeRateRequestDto;
 import com.projects.currencyconversion.dto.ExchangeRateResponseDto;
 import com.projects.currencyconversion.service.ExchangeRateService;
 import com.projects.currencyconversion.service.impl.ExchangeRateServiceImpl;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,7 +33,7 @@ public class ExchangeRatesServlet extends HttpServlet {
         ExchangeRateRequestDto exchangeRateRequestDto = ExchangeRateRequestDto.builder()
                 .baseCurrencyCode(req.getParameter("baseCurrencyCode"))
                 .targetCurrencyCode(req.getParameter("targetCurrencyCode"))
-                .rate(Double.valueOf(req.getParameter("rate")))
+                .rate(req.getParameter("rate"))
                 .build();
 
         ExchangeRateResponseDto exchangeRateResponseDto = exchangeRateService.create(exchangeRateRequestDto);
