@@ -35,18 +35,6 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     @Override
-    public CurrencyResponseDto findById(Long id) {
-        return currencyDao.findById(id)
-                .map(currency -> new CurrencyResponseDto(
-                        currency.getId(),
-                        currency.getCode(),
-                        currency.getFullName(),
-                        currency.getSign()
-                ))
-                .orElseThrow(() -> new NoSuchElementException("The currency with the id = " + id + "wasn't found"));
-    }
-
-    @Override
     public CurrencyResponseDto findByCode(String code) {
         return currencyDao.findByCode(code)
                 .map(currency -> new CurrencyResponseDto(

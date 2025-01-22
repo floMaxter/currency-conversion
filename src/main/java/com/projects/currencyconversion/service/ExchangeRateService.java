@@ -8,7 +8,9 @@ import java.util.List;
 public interface ExchangeRateService {
 
     List<ExchangeRateResponseDto> findAll();
+
     ExchangeRateResponseDto findByCoupleOfCode(String coupleOfCode);
+
 
     ExchangeRateResponseDto create(ExchangeRateRequestDto exchangeRateRequestDto);
 

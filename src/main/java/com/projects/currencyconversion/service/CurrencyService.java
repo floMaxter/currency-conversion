@@ -9,8 +9,6 @@ public interface CurrencyService {
 
     List<CurrencyResponseDto> findAll();
 
-    CurrencyResponseDto findById(Long id);
-
     CurrencyResponseDto findByCode(String code);
 
     CurrencyResponseDto create(CurrencyRequestDto currencyRequestDto);
