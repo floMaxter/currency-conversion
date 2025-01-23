@@ -4,7 +4,7 @@ import com.projects.currencyconversion.dao.CurrencyDao;
 import com.projects.currencyconversion.dto.CurrencyRequestDto;
 import com.projects.currencyconversion.dto.CurrencyResponseDto;
 import com.projects.currencyconversion.entity.Currency;
-import com.projects.currencyconversion.exception.CurrencyNotFoundException;
+import com.projects.currencyconversion.exception.NotFoundException;
 import com.projects.currencyconversion.exception.ValidationException;
 import com.projects.currencyconversion.mapper.impl.CurrencyRequestMapper;
 import com.projects.currencyconversion.mapper.impl.CurrencyResponseMapper;
@@ -47,7 +47,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
         Optional<Currency> optionalCurrency = currencyDao.findByCode(code);
         if (optionalCurrency.isEmpty()) {
-            throw new CurrencyNotFoundException("The currency with the code = " + code + "wasn't found");
+            throw new NotFoundException("The currency with the code: " + code + " wasn't found");
         }
         return currencyResponseMapper.toDto(optionalCurrency.get());
     }

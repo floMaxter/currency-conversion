@@ -2,6 +2,7 @@ package com.projects.currencyconversion.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projects.currencyconversion.exception.ErrorResponseDto;
+import com.projects.currencyconversion.exception.NotFoundException;
 import com.projects.currencyconversion.exception.ValidationException;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -25,13 +26,11 @@ public class ExceptionHandlerFilter implements Filter {
         try {
             filterChain.doFilter(servletRequest, servletResponse);
         } catch (ValidationException e) {
-            handleException((HttpServletResponse) servletResponse,
-                    HttpServletResponse.SC_BAD_REQUEST,
-                    new ErrorResponseDto(e.getMessage()));
+            handleException((HttpServletResponse) servletResponse, HttpServletResponse.SC_BAD_REQUEST, new ErrorResponseDto(e.getMessage()));
+        } catch (NotFoundException e) {
+            handleException((HttpServletResponse) servletResponse, HttpServletResponse.SC_NOT_FOUND, new ErrorResponseDto(e.getMessage()));
         } catch (Exception e) {
-            handleException((HttpServletResponse)  servletResponse,
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    new ErrorResponseDto(e.getMessage()));
+            handleException((HttpServletResponse) servletResponse, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, new ErrorResponseDto(e.getMessage()));
         }
     }
 
