@@ -56,7 +56,7 @@ public final class ConnectionManager {
         try {
             return pool.take();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("The database is unavailable");
         }
     }
 

@@ -86,7 +86,7 @@ public class CurrencyDao implements Dao<Long, Currency> {
 
     @Override
     public List<Currency> findAll() {
-        try (Connection connection = ConnectionManager.get();) {
+        try (Connection connection = ConnectionManager.get()) {
             return findAll(connection);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -110,7 +110,7 @@ public class CurrencyDao implements Dao<Long, Currency> {
 
     @Override
     public Optional<Currency> findById(Long id) {
-        try (Connection connection = ConnectionManager.get();) {
+        try (Connection connection = ConnectionManager.get()) {
             return findById(id, connection);
         } catch (SQLException e) {
             throw new RuntimeException(e);
