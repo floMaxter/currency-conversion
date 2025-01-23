@@ -23,8 +23,9 @@ public class CurrencyServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String code = getPathFromRequest(req);
-
         CurrencyResponseDto findCurrencyDto = currencyService.findByCode(code);
+
+        resp.setStatus(HttpServletResponse.SC_OK);
         try (PrintWriter writer = resp.getWriter()) {
             writer.write(objectMapper.writeValueAsString(findCurrencyDto));
         }

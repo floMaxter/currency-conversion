@@ -19,7 +19,7 @@ public class CurrencyCodeValidator implements Validator<String> {
         ValidationResult validationResult = new ValidationResult();
         if (!isValidCode(object)) {
             validationResult.add(ValidationError.of("invalid.code",
-                    "The \"" + object + "\" code is invalid"));
+                    "Invalid currency code: " + object));
         }
         return validationResult;
     }

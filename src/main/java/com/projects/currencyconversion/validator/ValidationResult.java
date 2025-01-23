@@ -2,6 +2,7 @@ package com.projects.currencyconversion.validator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ValidationResult {
 
@@ -25,5 +26,18 @@ public class ValidationResult {
 
     public List<ValidationError> getErrors() {
         return errors;
+    }
+
+    public String getMessage() {
+        return this.errors.stream()
+                .map(error -> error.code() + ": " + error.message())
+                .collect(Collectors.joining(";"));
+    }
+
+    @Override
+    public String toString() {
+        return "ValidationResult{" +
+               "errors=" + errors +
+               '}';
     }
 }

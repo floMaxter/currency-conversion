@@ -4,14 +4,17 @@ import com.projects.currencyconversion.dao.CurrencyDao;
 import com.projects.currencyconversion.dto.CurrencyRequestDto;
 import com.projects.currencyconversion.dto.CurrencyResponseDto;
 import com.projects.currencyconversion.entity.Currency;
+import com.projects.currencyconversion.exception.CurrencyNotFoundException;
+import com.projects.currencyconversion.exception.ValidationException;
 import com.projects.currencyconversion.mapper.impl.CurrencyRequestMapper;
 import com.projects.currencyconversion.mapper.impl.CurrencyResponseMapper;
 import com.projects.currencyconversion.service.CurrencyService;
 import com.projects.currencyconversion.validator.ValidationResult;
 import com.projects.currencyconversion.validator.impl.CreateCurrencyValidator;
+import com.projects.currencyconversion.validator.impl.CurrencyCodeValidator;
 
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 
 public class CurrencyServiceImpl implements CurrencyService {
 
@@ -19,6 +22,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     private final CurrencyDao currencyDao = CurrencyDao.getInstance();
     private final CurrencyRequestMapper currencyRequestMapper = CurrencyRequestMapper.getInstance();
     private final CurrencyResponseMapper currencyResponseMapper = CurrencyResponseMapper.getInstance();
+    private final CurrencyCodeValidator currencyCodeValidator = CurrencyCodeValidator.getInstance();
     private final CreateCurrencyValidator createCurrencyValidator = CreateCurrencyValidator.getInstance();
 
     public CurrencyServiceImpl() {
@@ -36,14 +40,16 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     public CurrencyResponseDto findByCode(String code) {
-        return currencyDao.findByCode(code)
-                .map(currency -> new CurrencyResponseDto(
-                        currency.getId(),
-                        currency.getCode(),
-                        currency.getFullName(),
-                        currency.getSign()
-                ))
-                .orElseThrow(() -> new NoSuchElementException("The currency with the code = " + code + "wasn't found"));
+        ValidationResult validationResult = currencyCodeValidator.isValid(code);
+        if (!validationResult.isValid()) {
+            throw new ValidationException(validationResult.getMessage());
+        }
+
+        Optional<Currency> optionalCurrency = currencyDao.findByCode(code);
+        if (optionalCurrency.isEmpty()) {
+            throw new CurrencyNotFoundException("The currency with the code = " + code + "wasn't found");
+        }
+        return currencyResponseMapper.toDto(optionalCurrency.get());
     }
 
     @Override
@@ -52,6 +58,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         if (!validationResult.isValid()) {
             throw new RuntimeException(String.valueOf(validationResult.getErrors()));
         }
+
         Currency currency = currencyRequestMapper.toEntity(currencyRequestDto);
         Currency savedCurrency = currencyDao.save(currency);
         return currencyResponseMapper.toDto(savedCurrency);

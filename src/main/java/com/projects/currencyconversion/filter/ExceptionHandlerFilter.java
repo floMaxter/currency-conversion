@@ -5,7 +5,6 @@ import com.projects.currencyconversion.exception.ErrorResponseDto;
 import com.projects.currencyconversion.exception.ValidationException;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
@@ -25,6 +24,10 @@ public class ExceptionHandlerFilter implements Filter {
             throws IOException {
         try {
             filterChain.doFilter(servletRequest, servletResponse);
+        } catch (ValidationException e) {
+            handleException((HttpServletResponse) servletResponse,
+                    HttpServletResponse.SC_BAD_REQUEST,
+                    new ErrorResponseDto(e.getMessage()));
         } catch (Exception e) {
             handleException((HttpServletResponse)  servletResponse,
                     HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
@@ -37,7 +40,7 @@ public class ExceptionHandlerFilter implements Filter {
                                  ErrorResponseDto errorResponseDto) throws IOException {
         resp.setStatus(statusCode);
         resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        resp.setContentType("application/json");
+        resp.setContentType("application/json; charset=UTF-8");
         try (PrintWriter writer = resp.getWriter()) {
             writer.write(objectMapper.writeValueAsString(errorResponseDto));
         }
