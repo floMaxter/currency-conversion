@@ -47,7 +47,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
         Optional<Currency> optionalCurrency = currencyDao.findByCode(code);
         if (optionalCurrency.isEmpty()) {
-            throw new NotFoundException("The currency with the code: " + code + " wasn't found");
+            throw new NotFoundException("The currency with this code was not found: " + code);
         }
         return currencyResponseMapper.toDto(optionalCurrency.get());
     }
@@ -56,7 +56,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     public CurrencyResponseDto create(CurrencyRequestDto currencyRequestDto) {
         ValidationResult validationResult = createCurrencyValidator.isValid(currencyRequestDto);
         if (!validationResult.isValid()) {
-            throw new RuntimeException(String.valueOf(validationResult.getErrors()));
+            throw new ValidationException(validationResult.getMessage());
         }
 
         Currency currency = currencyRequestMapper.toEntity(currencyRequestDto);

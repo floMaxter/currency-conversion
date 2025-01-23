@@ -23,6 +23,8 @@ public class CurrenciesServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         List<CurrencyResponseDto> currencyDtos = currencyService.findAll();
+
+        resp.setStatus(HttpServletResponse.SC_OK);
         try (PrintWriter writer = resp.getWriter()) {
             writer.write(objectMapper.writeValueAsString(currencyDtos));
         }
@@ -37,6 +39,7 @@ public class CurrenciesServlet extends HttpServlet {
                 .build();
 
         CurrencyResponseDto savedCurrency = currencyService.create(currencyRequestDto);
+        resp.setStatus(HttpServletResponse.SC_CREATED);
         try (PrintWriter writer = resp.getWriter()) {
             writer.write(objectMapper.writeValueAsString(savedCurrency));
         }

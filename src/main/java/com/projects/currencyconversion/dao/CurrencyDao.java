@@ -1,7 +1,9 @@
 package com.projects.currencyconversion.dao;
 
 import com.projects.currencyconversion.Utils.ConnectionManager;
+import com.projects.currencyconversion.Utils.PropertiesUtil;
 import com.projects.currencyconversion.entity.Currency;
+import com.projects.currencyconversion.exception.AlreadyExistsException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -80,6 +82,10 @@ public class CurrencyDao implements Dao<Long, Currency> {
 
             return currency;
         } catch (SQLException e) {
+            if (e.getMessage().contains("UNIQUE") &&
+                e.getErrorCode() == Integer.parseInt(PropertiesUtil.get("db.unique_error_code"))) {
+                throw new AlreadyExistsException("The currency with this code already exists: " + currency.getCode());
+            }
             throw new RuntimeException(e);
         }
     }

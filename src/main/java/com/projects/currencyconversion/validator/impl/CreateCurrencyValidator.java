@@ -24,11 +24,11 @@ public class CreateCurrencyValidator implements Validator<CurrencyRequestDto> {
         }
         if (!isValidCurrencyName(object.name())) {
             validationResult.add(ValidationError.of("invalid.name",
-                    "The \"" + object.name() + "\" name is invalid"));
+                    "Invalid currency name: " + object.name()));
         }
         if (!isValidCurrencySign(object.sign())) {
             validationResult.add(ValidationError.of("invalid.sign",
-                    "The \"" + object.sign() + "\" sign is invalid"));
+                    "Invalid currency sign: " + object.sign()));
         }
         return validationResult;
     }
@@ -36,13 +36,13 @@ public class CreateCurrencyValidator implements Validator<CurrencyRequestDto> {
     private boolean isValidCurrencyName(String name) {
         int minLengthName = Integer.parseInt(PropertiesUtil.get("db.currency.full_name.min_length"));
         int maxLengthName = Integer.parseInt(PropertiesUtil.get("db.currency.full_name.max_length"));
-        return name != null && name.length() < maxLengthName && name.length() > minLengthName;
+        return name != null && name.length() <= maxLengthName && name.length() >= minLengthName;
     }
 
     private boolean isValidCurrencySign(String sign) {
         int minSignLength = Integer.parseInt(PropertiesUtil.get("db.currency.sign.min_length"));
         int maxSignLength = Integer.parseInt(PropertiesUtil.get("db.currency.sign.max_length"));
-        return sign != null && sign.length() < maxSignLength && sign.length() > minSignLength;
+        return sign != null && sign.length() <= maxSignLength && sign.length() >= minSignLength;
     }
 
     public static CreateCurrencyValidator getInstance() {

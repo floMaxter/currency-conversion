@@ -1,10 +1,10 @@
 package com.projects.currencyconversion.exception;
 
-public class ValidationException extends RuntimeException {
+public class AlreadyExistsException extends RuntimeException {
 
     private final String message;
 
-    public ValidationException(String message) {
+    public AlreadyExistsException(String message) {
         this.message = message;
     }
 

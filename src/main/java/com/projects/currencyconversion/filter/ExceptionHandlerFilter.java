@@ -1,6 +1,7 @@
 package com.projects.currencyconversion.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.projects.currencyconversion.exception.AlreadyExistsException;
 import com.projects.currencyconversion.exception.ErrorResponseDto;
 import com.projects.currencyconversion.exception.NotFoundException;
 import com.projects.currencyconversion.exception.ValidationException;
@@ -29,6 +30,8 @@ public class ExceptionHandlerFilter implements Filter {
             handleException((HttpServletResponse) servletResponse, HttpServletResponse.SC_BAD_REQUEST, new ErrorResponseDto(e.getMessage()));
         } catch (NotFoundException e) {
             handleException((HttpServletResponse) servletResponse, HttpServletResponse.SC_NOT_FOUND, new ErrorResponseDto(e.getMessage()));
+        } catch (AlreadyExistsException e) {
+            handleException((HttpServletResponse) servletResponse, HttpServletResponse.SC_CONFLICT, new ErrorResponseDto(e.getMessage()));
         } catch (Exception e) {
             handleException((HttpServletResponse) servletResponse, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, new ErrorResponseDto(e.getMessage()));
         }
