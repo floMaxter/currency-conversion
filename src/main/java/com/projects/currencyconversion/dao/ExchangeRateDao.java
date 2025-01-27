@@ -1,6 +1,7 @@
 package com.projects.currencyconversion.dao;
 
 import com.projects.currencyconversion.Utils.ConnectionManager;
+import com.projects.currencyconversion.entity.Currency;
 import com.projects.currencyconversion.entity.ExchangeRate;
 
 import java.sql.Connection;
@@ -34,8 +35,24 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
             WHERE id = ?
             """;
 
-    private static final String FIND_BY_COUPLE_OF_CODES_SQL = FIND_ALL_SQL + """
-            WHERE c_base_currency_id = ? AND c_target_currency_id = ?
+    private static final String FIND_BY_COUPLE_OF_CODES_SQL = """
+            SELECT
+                er.id exchange_rate_id,
+                bc.id base_currency_id,
+                bc.c_code base_currency_code,
+                bc.c_full_name base_currency_name,
+                bc.c_sign base_currency_sign,
+                tc.id target_currency_id,
+                tc.c_code target_currency_code,
+                tc.c_full_name target_currency_name,
+                tc.c_sign target_currency_sign,
+                er.c_rate exchange_rate
+            FROM t_exchange_rates er
+            LEFT JOIN t_currencies bc
+                ON er.c_base_currency_id = bc.id
+            LEFT JOIN t_currencies tc
+                ON er.c_target_currency_id = tc.id
+            WHERE bc.c_code = ? AND tc.c_code = ?
             """;
 
     private static final String UPDATE_SQL = """
@@ -99,10 +116,11 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
 
     public List<ExchangeRate> findAll(Connection connection) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL)) {
-            List<ExchangeRate> exchangeRates = new ArrayList<>();
             ResultSet resultSet = preparedStatement.executeQuery();
+
+            List<ExchangeRate> exchangeRates = new ArrayList<>();
             while (resultSet.next()) {
-                exchangeRates.add(buildExchangeRates(resultSet));
+                exchangeRates.add(buildExchangeRatesUsingDao(resultSet));
             }
 
             return exchangeRates;
@@ -127,7 +145,7 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
             ResultSet resultSet = preparedStatement.executeQuery();
             ExchangeRate findExchangeRate = null;
             if (resultSet.next()) {
-                findExchangeRate = buildExchangeRates(resultSet);
+                findExchangeRate = buildExchangeRatesUsingDao(resultSet);
             }
 
             return Optional.ofNullable(findExchangeRate);
@@ -136,34 +154,7 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
         }
     }
 
-    public Optional<ExchangeRate> findByCoupleOfCurrencyId(Long baseCurrencyId, Long targetCurrencyId) {
-        try (Connection connection = ConnectionManager.get()) {
-            return findByCoupleOfCurrencyId(baseCurrencyId, targetCurrencyId, connection);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public Optional<ExchangeRate> findByCoupleOfCurrencyId(Long baseCurrencyId,
-                                                           Long targetCurrencyId,
-                                                           Connection connection) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_COUPLE_OF_CODES_SQL)) {
-            preparedStatement.setLong(1, baseCurrencyId);
-            preparedStatement.setLong(2, targetCurrencyId);
-
-            ResultSet resultSet = preparedStatement.executeQuery();
-            ExchangeRate findExchangeRate = null;
-            if (resultSet.next()) {
-                findExchangeRate = buildExchangeRates(resultSet);
-            }
-
-            return Optional.ofNullable(findExchangeRate);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private ExchangeRate buildExchangeRates(ResultSet resultSet) throws SQLException {
+    private ExchangeRate buildExchangeRatesUsingDao(ResultSet resultSet) throws SQLException {
         return new ExchangeRate(
                 resultSet.getLong("id"),
                 currencyDao.findById(resultSet.getLong("c_base_currency_id")).orElse(null),
@@ -172,6 +163,53 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
         );
     }
 
+    public Optional<ExchangeRate> findByCoupleOfCurrencyCode(String baseCurrencyCode, String targetCurrencyCode) {
+        try (Connection connection = ConnectionManager.get()) {
+            return findByCoupleOfCurrencyCode(baseCurrencyCode, targetCurrencyCode, connection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Optional<ExchangeRate> findByCoupleOfCurrencyCode(String baseCurrencyCode,
+                                                             String targetCurrencyCode,
+                                                             Connection connection) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_COUPLE_OF_CODES_SQL)) {
+            preparedStatement.setString(1, baseCurrencyCode);
+            preparedStatement.setString(2, targetCurrencyCode);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            ExchangeRate findExchangeRate = null;
+            if (resultSet.next()) {
+                findExchangeRate = buildExchangeRateFromJoin(resultSet);
+            }
+
+            return Optional.ofNullable(findExchangeRate);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private ExchangeRate buildExchangeRateFromJoin(ResultSet resultSet) throws SQLException {
+        Currency baseCurrency = Currency.builder()
+                .id(resultSet.getLong("base_currency_id"))
+                .code(resultSet.getString("base_currency_code"))
+                .fullName(resultSet.getString("base_currency_name"))
+                .sign(resultSet.getString("base_currency_sign"))
+                .build();
+        Currency targetCurrency = Currency.builder()
+                .id(resultSet.getLong("target_currency_id"))
+                .code(resultSet.getString("target_currency_code"))
+                .fullName(resultSet.getString("target_currency_name"))
+                .sign(resultSet.getString("target_currency_sign"))
+                .build();
+        return ExchangeRate.builder()
+                .id(resultSet.getLong("exchange_rate_id"))
+                .baseCurrency(baseCurrency)
+                .targetCurrency(targetCurrency)
+                .rate(resultSet.getDouble("exchange_rate"))
+                .build();
+    }
 
     @Override
     public ExchangeRate update(ExchangeRate exchangeRate) {

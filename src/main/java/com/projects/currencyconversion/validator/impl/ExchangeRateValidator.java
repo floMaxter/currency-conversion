@@ -16,7 +16,7 @@ public class ExchangeRateValidator implements Validator<String> {
         ValidationResult validationResult = new ValidationResult();
         if (!isDouble(object)) {
             validationResult.add(ValidationError.of("invalid.rate",
-                    "The \"" + object + "\" is not a number"));
+                    "Invalid exchange rate: " + object));
         }
         return validationResult;
     }

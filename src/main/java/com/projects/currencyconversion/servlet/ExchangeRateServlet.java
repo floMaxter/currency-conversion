@@ -23,7 +23,9 @@ public class ExchangeRateServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String coupleOfCode = RequestUtils.getPathFromRequest(req);
+
         ExchangeRateResponseDto exchangeRateResponseDto = exchangeRateService.findByCoupleOfCode(coupleOfCode);
+        resp.setStatus(HttpServletResponse.SC_OK);
         try (PrintWriter writer = resp.getWriter()) {
             writer.write(objectMapper.writeValueAsString(exchangeRateResponseDto));
         }
@@ -32,11 +34,11 @@ public class ExchangeRateServlet extends HttpServlet {
     @Override
     protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String coupleOfCode = RequestUtils.getPathFromRequest(req);
-        try (PrintWriter writer = resp.getWriter()) {
-            Map<String, String> params =  RequestUtils.getParamsFromRequestBody(req);
-            Double newRate = Double.valueOf(params.get("rate"));
 
-            ExchangeRateResponseDto exchangeRateResponseDto = exchangeRateService.update(coupleOfCode, newRate);
+        Map<String, String> params =  RequestUtils.getParamsFromRequestBody(req);
+        ExchangeRateResponseDto exchangeRateResponseDto =
+                exchangeRateService.update(coupleOfCode, params.get("rate"));
+        try (PrintWriter writer = resp.getWriter()) {
             writer.write(objectMapper.writeValueAsString(exchangeRateResponseDto));
         }
     }

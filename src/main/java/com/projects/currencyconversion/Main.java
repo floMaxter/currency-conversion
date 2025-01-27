@@ -5,13 +5,27 @@ import com.projects.currencyconversion.dao.CurrencyDao;
 import com.projects.currencyconversion.dao.ExchangeRateDao;
 import com.projects.currencyconversion.entity.Currency;
 import com.projects.currencyconversion.entity.ExchangeRate;
+import com.projects.currencyconversion.validator.ValidationResult;
+import com.projects.currencyconversion.validator.impl.CoupleOfCurrencyCodeValidator;
 
 import java.sql.SQLException;
 import java.util.Optional;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println(Double.parseDouble("12e5"));
+        findExchangeRateDaoTest();
+    }
+
+    private static void findExchangeRateDaoTest() {
+        ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
+        var findExchangeRate = exchangeRateDao.findByCoupleOfCurrencyCode("USD", "RUB");
+        findExchangeRate.ifPresent(System.out::println);
+    }
+
+    private static void coupleOfCodeValidationTest() {
+        CoupleOfCurrencyCodeValidator validator = CoupleOfCurrencyCodeValidator.getInstance();
+        ValidationResult validationResult = validator.isValid("RUBUSDD");
+        System.out.println(validationResult.isValid());
     }
 
     private static void deleteExchangeRatesTest() {

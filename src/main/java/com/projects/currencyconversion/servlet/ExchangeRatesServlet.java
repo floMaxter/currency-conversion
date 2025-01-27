@@ -23,6 +23,8 @@ public class ExchangeRatesServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         List<ExchangeRateResponseDto> findExchangeRates = exchangeRateService.findAll();
+
+        resp.setStatus(HttpServletResponse.SC_OK);
         try (PrintWriter writer = resp.getWriter()) {
             writer.write(objectMapper.writeValueAsString(findExchangeRates));
         }
