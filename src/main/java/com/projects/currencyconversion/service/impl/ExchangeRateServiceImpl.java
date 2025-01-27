@@ -27,6 +27,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     private final ExchangeRateResponseMapper exchangeRateResponseMapper = ExchangeRateResponseMapper.getInstance();
     private final Validator<String> coupleOfCurrencyCodeValidator = CoupleOfCurrencyCodeValidator.getInstance();
     private final Validator<ExchangeRateRequestDto> createExchangeRateValidator = CreateExchangeRateValidator.getInstance();
+    private static final int CODE_LENGTH = Integer.parseInt(PropertiesUtil.get("db.currency.code.length"));
 
     private ExchangeRateServiceImpl() {
     }
@@ -48,9 +49,8 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
             throw new ValidationException(codesValidationResult.getMessage());
         }
 
-        int codeLength = Integer.parseInt(PropertiesUtil.get("db.currency.code.length"));
-        String baseCurrencyCode = coupleOfCode.substring(0, codeLength);
-        String targetCurrencyCode = coupleOfCode.substring(codeLength);
+        String baseCurrencyCode = coupleOfCode.substring(0, CODE_LENGTH);
+        String targetCurrencyCode = coupleOfCode.substring(CODE_LENGTH);
 
         Optional<ExchangeRate> optionalExchangeRate = exchangeRateDao
                 .findByCoupleOfCurrencyCode(baseCurrencyCode, targetCurrencyCode);
@@ -73,6 +73,25 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         return exchangeRateResponseMapper.toDto(savedExchangeRate);
     }
 
+    @Override
+    public ExchangeRateResponseDto update(String coupleOfCode, String rate) {
+        ExchangeRateRequestDto exchangeRateRequestDto = buildExchangeRateRequestDto(coupleOfCode, rate);
+        ValidationResult validationResult = createExchangeRateValidator.isValid(exchangeRateRequestDto);
+        if (!validationResult.isValid()) {
+            throw new ValidationException(validationResult.getMessage());
+        }
+
+        ExchangeRate newExchangeRate = buildExchangeRate(exchangeRateRequestDto);
+        ExchangeRate findedExchangeRate = getExchangeRateOrThrow(
+                exchangeRateRequestDto.baseCurrencyCode(),
+                exchangeRateRequestDto.targetCurrencyCode()
+        );
+        newExchangeRate.setId(findedExchangeRate.getId());
+
+        ExchangeRate updatedExchangeRate = exchangeRateDao.update(newExchangeRate);
+        return exchangeRateResponseMapper.toDto(updatedExchangeRate);
+    }
+
     private ExchangeRate buildExchangeRate(ExchangeRateRequestDto exchangeRateRequestDto) {
         Currency baseCurrency = getCurrencyOrThrow(exchangeRateRequestDto.baseCurrencyCode());
         Currency targetCurrency = getCurrencyOrThrow(exchangeRateRequestDto.targetCurrencyCode());
@@ -84,38 +103,25 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
                 .build();
     }
 
+    private ExchangeRateRequestDto buildExchangeRateRequestDto(String coupleOfCode, String rate) {
+        String baseCurrencyCode = coupleOfCode.substring(0, CODE_LENGTH);
+        String targetCurrencyCode = coupleOfCode.substring(CODE_LENGTH);
+
+        return ExchangeRateRequestDto.builder()
+                .baseCurrencyCode(baseCurrencyCode)
+                .targetCurrencyCode(targetCurrencyCode)
+                .rate(rate)
+                .build();
+    }
+
     private Currency getCurrencyOrThrow(String code) {
         return currencyDao.findByCode(code)
                 .orElseThrow(() -> new NotFoundException("There is no currency with this code: " + code));
     }
 
-    @Override
-    public ExchangeRateResponseDto update(String coupleOfCode, String newRate) {
-        // Извлечь из Dto rate
-        // Найти exchangeRate по coupleOfCode
-        // Занести в найденную сущность новый rate
-        // Сохранить измененную сущность
-
-//        String baseCurrencyCode = coupleOfCode.substring(0, 3);
-//        String targetCurrencyCode = coupleOfCode.substring(3);
-//
-//        Optional<Currency> optionalBaseCurrency = currencyDao.findByCode(baseCurrencyCode);
-//        Optional<Currency> optionalTargetCurrency = currencyDao.findByCode(targetCurrencyCode);
-//        if (optionalBaseCurrency.isPresent() && optionalTargetCurrency.isPresent()) {
-//            Currency baseCurrency = optionalBaseCurrency.get();
-//            Currency targetCurrency = optionalTargetCurrency.get();
-//
-//            Optional<ExchangeRate> optionalExchangeRate = exchangeRateDao
-//                    .findByCoupleOfCurrencyCode(baseCurrency.getId(), targetCurrency.getId());
-//            ExchangeRate findExchangeRate = optionalExchangeRate.get();
-//            findExchangeRate.setRate(Double.valueOf(newRate));
-//
-//            ExchangeRate savedExchangeRate = exchangeRateDao.update(findExchangeRate);
-//
-//            return exchangeRateResponseMapper.toDto(savedExchangeRate);
-//        } else {
-//            throw new NoSuchElementException();
-//        }
-        return null;
+    private ExchangeRate getExchangeRateOrThrow(String baseCurrencyCode, String targetCurrencyCode) {
+        return exchangeRateDao.findByCoupleOfCurrencyCode(baseCurrencyCode, targetCurrencyCode)
+                .orElseThrow(() -> new NotFoundException("There is no exchange rate with such currency codes: "
+                                                         + baseCurrencyCode + ", " + targetCurrencyCode));
     }
 }

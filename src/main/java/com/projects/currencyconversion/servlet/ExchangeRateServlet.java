@@ -34,10 +34,11 @@ public class ExchangeRateServlet extends HttpServlet {
     @Override
     protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String coupleOfCode = RequestUtils.getPathFromRequest(req);
-
         Map<String, String> params =  RequestUtils.getParamsFromRequestBody(req);
+
         ExchangeRateResponseDto exchangeRateResponseDto =
                 exchangeRateService.update(coupleOfCode, params.get("rate"));
+        resp.setStatus(HttpServletResponse.SC_OK);
         try (PrintWriter writer = resp.getWriter()) {
             writer.write(objectMapper.writeValueAsString(exchangeRateResponseDto));
         }

@@ -1,10 +1,10 @@
 package com.projects.currencyconversion.Utils;
 
+import com.projects.currencyconversion.exception.ValidationException;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,14 +18,18 @@ public final class RequestUtils {
     public static Map<String, String> getParamsFromRequestBody(HttpServletRequest req) throws IOException {
         Map<String, String> params = new HashMap<>();
         try (BufferedReader reader = req.getReader()) {
-            String[] pairs = reader.readLine().split("&");
+            String lines = reader.readLine();
+            if (lines == null) {
+                throw new ValidationException("The request doesn't contain the rate parameter.");
+            }
 
+            String[] pairs = lines.split("&");
             for (String pair : pairs) {
                 String[] keyValue = pair.split("=", 2);
                 if (keyValue.length == 2) {
                     params.put(keyValue[0], keyValue[1]);
                 } else {
-                    throw new RemoteException("Incorrect params in request body");
+                    throw new ValidationException("Incorrect params in request body");
                 }
             }
         }
