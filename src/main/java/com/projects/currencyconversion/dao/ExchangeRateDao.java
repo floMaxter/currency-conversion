@@ -130,7 +130,6 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
             while (resultSet.next()) {
                 exchangeRates.add(buildExchangeRatesUsingDao(resultSet));
             }
-
             return exchangeRates;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -155,7 +154,6 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
             if (resultSet.next()) {
                 findExchangeRate = buildExchangeRatesUsingDao(resultSet);
             }
-
             return Optional.ofNullable(findExchangeRate);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -191,7 +189,6 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
             if (resultSet.next()) {
                 findExchangeRate = buildExchangeRateFromJoin(resultSet);
             }
-
             return Optional.ofNullable(findExchangeRate);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -242,7 +239,6 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
             if (generatedKeys.next()) {
                 exchangeRate.setId(generatedKeys.getLong(1));
             }
-
             return exchangeRate;
         } catch (SQLException e) {
             throw new RuntimeException(e);

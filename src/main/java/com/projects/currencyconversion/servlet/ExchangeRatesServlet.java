@@ -32,16 +32,20 @@ public class ExchangeRatesServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        ExchangeRateRequestDto exchangeRateRequestDto = ExchangeRateRequestDto.builder()
-                .baseCurrencyCode(req.getParameter("baseCurrencyCode"))
-                .targetCurrencyCode(req.getParameter("targetCurrencyCode"))
-                .rate(req.getParameter("rate"))
-                .build();
+        ExchangeRateRequestDto exchangeRateRequestDto = buildExchangeRateRequestDto(req);
 
         ExchangeRateResponseDto exchangeRateResponseDto = exchangeRateService.create(exchangeRateRequestDto);
         resp.setStatus(HttpServletResponse.SC_CREATED);
         try (PrintWriter writer = resp.getWriter()) {
             writer.write(objectMapper.writeValueAsString(exchangeRateResponseDto));
         }
+    }
+
+    private ExchangeRateRequestDto buildExchangeRateRequestDto(HttpServletRequest req) {
+        return ExchangeRateRequestDto.builder()
+                .baseCurrencyCode(req.getParameter("baseCurrencyCode"))
+                .targetCurrencyCode(req.getParameter("targetCurrencyCode"))
+                .rate(req.getParameter("rate"))
+                .build();
     }
 }

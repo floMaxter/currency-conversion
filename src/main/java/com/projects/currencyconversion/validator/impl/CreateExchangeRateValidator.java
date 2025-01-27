@@ -7,8 +7,8 @@ import com.projects.currencyconversion.validator.Validator;
 public class CreateExchangeRateValidator implements Validator<ExchangeRateRequestDto> {
 
     private static final CreateExchangeRateValidator INSTANCE = new CreateExchangeRateValidator();
-    private final CurrencyCodeValidator currencyCodeValidator = CurrencyCodeValidator.getInstance();
-    private final ExchangeRateValidator exchangeRateValidator = ExchangeRateValidator.getInstance();
+    private final Validator<String> currencyCodeValidator = CurrencyCodeValidator.getInstance();
+    private final Validator<String> exchangeRateValidator = ExchangeRateValidator.getInstance();
 
     private CreateExchangeRateValidator() {
     }

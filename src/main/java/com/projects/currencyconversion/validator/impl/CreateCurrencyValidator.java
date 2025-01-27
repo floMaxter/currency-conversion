@@ -9,7 +9,7 @@ import com.projects.currencyconversion.validator.Validator;
 public class CreateCurrencyValidator implements Validator<CurrencyRequestDto> {
 
     private static final CreateCurrencyValidator INSTANCE = new CreateCurrencyValidator();
-    private final CurrencyCodeValidator currencyCodeValidator = CurrencyCodeValidator.getInstance();
+    private final Validator<String> currencyCodeValidator = CurrencyCodeValidator.getInstance();
 
     private CreateCurrencyValidator() {
     }

@@ -32,16 +32,20 @@ public class CurrenciesServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        CurrencyRequestDto currencyRequestDto = CurrencyRequestDto.builder()
-                .name(req.getParameter("name"))
-                .code(req.getParameter("code"))
-                .sign(req.getParameter("sign"))
-                .build();
+        CurrencyRequestDto currencyRequestDto = buildCurrencyRequestDto(req);
 
         CurrencyResponseDto savedCurrency = currencyService.create(currencyRequestDto);
         resp.setStatus(HttpServletResponse.SC_CREATED);
         try (PrintWriter writer = resp.getWriter()) {
             writer.write(objectMapper.writeValueAsString(savedCurrency));
         }
+    }
+
+    private CurrencyRequestDto buildCurrencyRequestDto(HttpServletRequest req) {
+        return CurrencyRequestDto.builder()
+                .name(req.getParameter("name"))
+                .code(req.getParameter("code"))
+                .sign(req.getParameter("sign"))
+                .build();
     }
 }

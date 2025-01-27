@@ -26,7 +26,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     private final CurrencyDao currencyDao = CurrencyDao.getInstance();
     private final ExchangeRateResponseMapper exchangeRateResponseMapper = ExchangeRateResponseMapper.getInstance();
     private final Validator<String> coupleOfCurrencyCodeValidator = CoupleOfCurrencyCodeValidator.getInstance();
-    private final CreateExchangeRateValidator createExchangeRateValidator = CreateExchangeRateValidator.getInstance();
+    private final Validator<ExchangeRateRequestDto> createExchangeRateValidator = CreateExchangeRateValidator.getInstance();
 
     private ExchangeRateServiceImpl() {
     }

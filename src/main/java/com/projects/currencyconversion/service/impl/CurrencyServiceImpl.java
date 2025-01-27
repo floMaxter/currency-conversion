@@ -10,6 +10,7 @@ import com.projects.currencyconversion.mapper.impl.CurrencyRequestMapper;
 import com.projects.currencyconversion.mapper.impl.CurrencyResponseMapper;
 import com.projects.currencyconversion.service.CurrencyService;
 import com.projects.currencyconversion.validator.ValidationResult;
+import com.projects.currencyconversion.validator.Validator;
 import com.projects.currencyconversion.validator.impl.CreateCurrencyValidator;
 import com.projects.currencyconversion.validator.impl.CurrencyCodeValidator;
 
@@ -22,8 +23,8 @@ public class CurrencyServiceImpl implements CurrencyService {
     private final CurrencyDao currencyDao = CurrencyDao.getInstance();
     private final CurrencyRequestMapper currencyRequestMapper = CurrencyRequestMapper.getInstance();
     private final CurrencyResponseMapper currencyResponseMapper = CurrencyResponseMapper.getInstance();
-    private final CurrencyCodeValidator currencyCodeValidator = CurrencyCodeValidator.getInstance();
-    private final CreateCurrencyValidator createCurrencyValidator = CreateCurrencyValidator.getInstance();
+    private final Validator<String> currencyCodeValidator = CurrencyCodeValidator.getInstance();
+    private final Validator<CurrencyRequestDto> createCurrencyValidator = CreateCurrencyValidator.getInstance();
 
     public CurrencyServiceImpl() {
     }

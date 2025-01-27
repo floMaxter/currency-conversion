@@ -79,7 +79,6 @@ public class CurrencyDao implements Dao<Long, Currency> {
             if (generatedKeys.next()) {
                 currency.setId(generatedKeys.getLong(1));
             }
-
             return currency;
         } catch (SQLException e) {
             if (e.getMessage().contains("UNIQUE") &&
@@ -107,7 +106,6 @@ public class CurrencyDao implements Dao<Long, Currency> {
             while (resultSet.next()) {
                 currencies.add(buildCurrency(resultSet));
             }
-
             return currencies;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -133,7 +131,6 @@ public class CurrencyDao implements Dao<Long, Currency> {
             if (resultSet.next()) {
                 findCurrency = buildCurrency(resultSet);
             }
-
             return Optional.ofNullable(findCurrency);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -159,7 +156,6 @@ public class CurrencyDao implements Dao<Long, Currency> {
             if (resultSet.next()) {
                 findCurrency = buildCurrency(resultSet);
             }
-
             return Optional.ofNullable(findCurrency);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -198,7 +194,6 @@ public class CurrencyDao implements Dao<Long, Currency> {
             if (generatedKeys.next()) {
                 currency.setId(generatedKeys.getLong(1));
             }
-
             return currency;
         } catch (SQLException e) {
             throw new RuntimeException(e);
