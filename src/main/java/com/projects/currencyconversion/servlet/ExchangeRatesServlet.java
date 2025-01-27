@@ -39,6 +39,7 @@ public class ExchangeRatesServlet extends HttpServlet {
                 .build();
 
         ExchangeRateResponseDto exchangeRateResponseDto = exchangeRateService.create(exchangeRateRequestDto);
+        resp.setStatus(HttpServletResponse.SC_CREATED);
         try (PrintWriter writer = resp.getWriter()) {
             writer.write(objectMapper.writeValueAsString(exchangeRateResponseDto));
         }

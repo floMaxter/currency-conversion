@@ -9,7 +9,6 @@ import com.projects.currencyconversion.entity.Currency;
 import com.projects.currencyconversion.entity.ExchangeRate;
 import com.projects.currencyconversion.exception.NotFoundException;
 import com.projects.currencyconversion.exception.ValidationException;
-import com.projects.currencyconversion.mapper.impl.ExchangeRateRequestMapper;
 import com.projects.currencyconversion.mapper.impl.ExchangeRateResponseMapper;
 import com.projects.currencyconversion.service.ExchangeRateService;
 import com.projects.currencyconversion.validator.ValidationResult;
@@ -18,7 +17,6 @@ import com.projects.currencyconversion.validator.impl.CoupleOfCurrencyCodeValida
 import com.projects.currencyconversion.validator.impl.CreateExchangeRateValidator;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public class ExchangeRateServiceImpl implements ExchangeRateService {
@@ -27,7 +25,6 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     private final ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
     private final CurrencyDao currencyDao = CurrencyDao.getInstance();
     private final ExchangeRateResponseMapper exchangeRateResponseMapper = ExchangeRateResponseMapper.getInstance();
-    private final ExchangeRateRequestMapper exchangeRateRequestMapper = ExchangeRateRequestMapper.getInstance();
     private final Validator<String> coupleOfCurrencyCodeValidator = CoupleOfCurrencyCodeValidator.getInstance();
     private final CreateExchangeRateValidator createExchangeRateValidator = CreateExchangeRateValidator.getInstance();
 
@@ -66,33 +63,30 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
 
     @Override
     public ExchangeRateResponseDto create(ExchangeRateRequestDto exchangeRateRequestDto) {
-        // Получить exchangeRateRequestDto с полями String вместо Currency
-        // Выполнить запрос в currencyDao findByCode() для base и target Currency
-        // Проверить, что сущности найдены, если нет - кинуть исключение
-        // Записать сущности в сущность ExchangeRate
-        // Произвести сохранение сущности save(exchangeRate)
-        // Вернуть ExchangeRateResponseDto
-
         ValidationResult validationResult = createExchangeRateValidator.isValid(exchangeRateRequestDto);
         if (!validationResult.isValid()) {
-            throw new RuntimeException(String.valueOf(validationResult.getErrors()));
+            throw new ValidationException(validationResult.getMessage());
         }
 
-        Optional<Currency> optionalBaseCurrency = currencyDao.findByCode(exchangeRateRequestDto.baseCurrencyCode());
-        Optional<Currency> optionalTargetCurrency = currencyDao.findByCode(exchangeRateRequestDto.targetCurrencyCode());
+        ExchangeRate newExchangeRate = buildExchangeRate(exchangeRateRequestDto);
+        ExchangeRate savedExchangeRate = exchangeRateDao.save(newExchangeRate);
+        return exchangeRateResponseMapper.toDto(savedExchangeRate);
+    }
 
-        if (optionalBaseCurrency.isPresent() && optionalTargetCurrency.isPresent()) {
-            ExchangeRate exchangeRate = ExchangeRate.builder()
-                    .baseCurrency(optionalBaseCurrency.get())
-                    .targetCurrency(optionalTargetCurrency.get())
-                    .rate(Double.valueOf(exchangeRateRequestDto.rate()))
-                    .build();
+    private ExchangeRate buildExchangeRate(ExchangeRateRequestDto exchangeRateRequestDto) {
+        Currency baseCurrency = getCurrencyOrThrow(exchangeRateRequestDto.baseCurrencyCode());
+        Currency targetCurrency = getCurrencyOrThrow(exchangeRateRequestDto.targetCurrencyCode());
 
-            ExchangeRate savedExchangeRate = exchangeRateDao.save(exchangeRate);
-            return exchangeRateResponseMapper.toDto(savedExchangeRate);
-        } else {
-            throw new NoSuchElementException();
-        }
+        return ExchangeRate.builder()
+                .baseCurrency(baseCurrency)
+                .targetCurrency(targetCurrency)
+                .rate(Double.valueOf(exchangeRateRequestDto.rate()))
+                .build();
+    }
+
+    private Currency getCurrencyOrThrow(String code) {
+        return currencyDao.findByCode(code)
+                .orElseThrow(() -> new NotFoundException("There is no currency with this code: " + code));
     }
 
     @Override

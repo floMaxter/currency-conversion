@@ -1,8 +1,10 @@
 package com.projects.currencyconversion.dao;
 
 import com.projects.currencyconversion.Utils.ConnectionManager;
+import com.projects.currencyconversion.Utils.PropertiesUtil;
 import com.projects.currencyconversion.entity.Currency;
 import com.projects.currencyconversion.entity.ExchangeRate;
+import com.projects.currencyconversion.exception.AlreadyExistsException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -101,6 +103,12 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
 
             return exchangeRate;
         } catch (SQLException e) {
+            if (e.getMessage().contains("UNIQUE") &&
+                e.getErrorCode() == Integer.parseInt(PropertiesUtil.get("db.unique_error_code"))) {
+                throw new AlreadyExistsException("The exchange rate for such currencies already exists: "
+                                                 + exchangeRate.getBaseCurrency().getCode() + ", "
+                                                 + exchangeRate.getTargetCurrency().getCode());
+            }
             throw new RuntimeException(e);
         }
     }

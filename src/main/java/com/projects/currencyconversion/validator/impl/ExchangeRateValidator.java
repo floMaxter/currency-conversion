@@ -14,6 +14,12 @@ public class ExchangeRateValidator implements Validator<String> {
     @Override
     public ValidationResult isValid(String object) {
         ValidationResult validationResult = new ValidationResult();
+
+        if (object == null) {
+            validationResult.add(ValidationError.of("invalid.rate",
+                    "Exchange rate is null"));
+            return validationResult;
+        }
         if (!isDouble(object)) {
             validationResult.add(ValidationError.of("invalid.rate",
                     "Invalid exchange rate: " + object));
