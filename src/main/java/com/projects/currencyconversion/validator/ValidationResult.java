@@ -31,7 +31,7 @@ public class ValidationResult {
     public String getMessage() {
         return this.errors.stream()
                 .map(error -> error.code() + ": " + error.message())
-                .collect(Collectors.joining(";"));
+                .collect(Collectors.joining("; "));
     }
 
     @Override

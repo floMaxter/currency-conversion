@@ -7,7 +7,7 @@ import com.projects.currencyconversion.validator.Validator;
 public class CreateExchangeRateValidator implements Validator<ExchangeRateRequestDto> {
 
     private static final CreateExchangeRateValidator INSTANCE = new CreateExchangeRateValidator();
-    private final Validator<String> currencyCodeValidator = CurrencyCodeValidator.getInstance();
+    private final Validator<String> coupleOfCurrencyCodeValidator = CoupleOfCurrencyCodeValidator.getInstance();
     private final Validator<String> exchangeRateValidator = ExchangeRateValidator.getInstance();
 
     private CreateExchangeRateValidator() {
@@ -17,13 +17,10 @@ public class CreateExchangeRateValidator implements Validator<ExchangeRateReques
     public ValidationResult isValid(ExchangeRateRequestDto object) {
         ValidationResult validationResult = new ValidationResult();
 
-        ValidationResult baseCodeValidationResult = currencyCodeValidator.isValid(object.baseCurrencyCode());
-        if (!baseCodeValidationResult.isValid()) {
-            validationResult.add(baseCodeValidationResult.getErrors());
-        }
-        ValidationResult targetCodeValidationResult = currencyCodeValidator.isValid(object.targetCurrencyCode());
-        if (!targetCodeValidationResult.isValid()) {
-            validationResult.add(targetCodeValidationResult.getErrors());
+        String coupleOfCode = object.baseCurrencyCode() + object.targetCurrencyCode();
+        ValidationResult coupleOfCodeValidationResult = coupleOfCurrencyCodeValidator.isValid(coupleOfCode);
+        if (!coupleOfCodeValidationResult.isValid()) {
+            validationResult.add(coupleOfCodeValidationResult.getErrors());
         }
         ValidationResult exchangeRateValidationResult = exchangeRateValidator.isValid(object.rate());
         if (!exchangeRateValidationResult.isValid()) {

@@ -9,7 +9,7 @@ import com.projects.currencyconversion.validator.Validator;
 public class ExchangeCurrencyValidator implements Validator<ExchangeCurrencyRequestDto> {
 
     private static final ExchangeCurrencyValidator INSTANCE = new ExchangeCurrencyValidator();
-    private final Validator<String> currencyCodeValidator = CurrencyCodeValidator.getInstance();
+    private final Validator<String> coupleOfCurrencyCodeValidator = CoupleOfCurrencyCodeValidator.getInstance();
 
     private ExchangeCurrencyValidator() {
     }
@@ -18,13 +18,10 @@ public class ExchangeCurrencyValidator implements Validator<ExchangeCurrencyRequ
     public ValidationResult isValid(ExchangeCurrencyRequestDto object) {
         ValidationResult validationResult = new ValidationResult();
 
-        ValidationResult baseCodeValidationResult = currencyCodeValidator.isValid(object.baseCurrencyCode());
-        if (!baseCodeValidationResult.isValid()) {
-            validationResult.add(baseCodeValidationResult.getErrors());
-        }
-        ValidationResult targetCodeValidationResult = currencyCodeValidator.isValid(object.targetCurrencyCode());
-        if (!targetCodeValidationResult.isValid()) {
-            validationResult.add(targetCodeValidationResult.getErrors());
+        String coupleOfCode = object.baseCurrencyCode() + object.targetCurrencyCode();
+        ValidationResult coupleOfCodeValidationResult = coupleOfCurrencyCodeValidator.isValid(coupleOfCode);
+        if (!coupleOfCodeValidationResult.isValid()) {
+            validationResult.add(coupleOfCodeValidationResult.getErrors());
         }
         if (!isValidAmount(object.amount())) {
             validationResult.add(ValidationError.of("invalid.amount",
