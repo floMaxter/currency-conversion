@@ -1,15 +1,25 @@
 package com.projects.currencyconversion.service.impl;
 
+import com.projects.currencyconversion.dao.ExchangeRateDao;
 import com.projects.currencyconversion.dto.ExchangeCurrencyRequestDto;
 import com.projects.currencyconversion.dto.ExchangeCurrencyResponseDto;
-import com.projects.currencyconversion.dto.ExchangeRateResponseDto;
+import com.projects.currencyconversion.entity.ExchangeRate;
+import com.projects.currencyconversion.exception.NotFoundException;
+import com.projects.currencyconversion.exception.ValidationException;
+import com.projects.currencyconversion.mapper.impl.CurrencyResponseMapper;
 import com.projects.currencyconversion.service.ExchangeCurrencyService;
-import com.projects.currencyconversion.service.ExchangeRateService;
+import com.projects.currencyconversion.validator.ValidationResult;
+import com.projects.currencyconversion.validator.Validator;
+import com.projects.currencyconversion.validator.impl.ExchangeCurrencyValidator;
+
+import java.util.Optional;
 
 public class ExchangeCurrencyServiceImpl implements ExchangeCurrencyService {
 
     private static final ExchangeCurrencyServiceImpl INSTANCE = new ExchangeCurrencyServiceImpl();
-    ExchangeRateService exchangeRateService = ExchangeRateServiceImpl.getInstance();
+    private final ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
+    private final CurrencyResponseMapper currencyResponseMapper = CurrencyResponseMapper.getInstance();
+    private final Validator<ExchangeCurrencyRequestDto> exchangeCurrencyValidator = ExchangeCurrencyValidator.getInstance();
 
     private ExchangeCurrencyServiceImpl() {
     }
@@ -20,22 +30,79 @@ public class ExchangeCurrencyServiceImpl implements ExchangeCurrencyService {
 
     @Override
     public ExchangeCurrencyResponseDto exchange(ExchangeCurrencyRequestDto exchangeCurrencyRequestDto) {
-        // Найти ExchangeRate по паре кодов, рассмотреть три возможных сценария (AB, BA, AC-CB)
-        // Посчитать rate * amount = convertedAmount
-        // Занести поля в ExchangeCurrencyResponse
+        ValidationResult validationResult = exchangeCurrencyValidator.isValid(exchangeCurrencyRequestDto);
+        if (!validationResult.isValid()) {
+            throw new ValidationException(validationResult.getMessage());
+        }
 
-        String coupleOfCode = exchangeCurrencyRequestDto.baseCurrencyCode() +
-                              exchangeCurrencyRequestDto.targetCurrencyCode();
-        ExchangeRateResponseDto exchangeRate = exchangeRateService.findByCoupleOfCode(coupleOfCode);
+        // Input: String baseCode, String targetCode, String amount
+        // Validation
+        // Get exchange rate
+        //      1: AB
+        //      2: BA - take the inverse rate
+        //      3: USD-A + USD-B - convert using another rate
+        // Get amount
+        // Get rate
 
-        Double convertedAmount = exchangeCurrencyRequestDto.amount() * exchangeRate.rate();
+        ExchangeRate exchangeRate = getExchangeRate(exchangeCurrencyRequestDto);
+
+        Double amount = Double.valueOf(exchangeCurrencyRequestDto.amount());
+        Double convertedAmount = exchangeRate.getRate() * amount;
 
         return ExchangeCurrencyResponseDto.builder()
-                .baseCurrencyResponseDto(exchangeRate.baseCurrency())
-                .targetCurrencyResponseDto(exchangeRate.targetCurrency())
-                .rate(exchangeRate.rate())
-                .amount(exchangeCurrencyRequestDto.amount())
+                .baseCurrencyResponseDto(currencyResponseMapper.toDto(exchangeRate.getBaseCurrency()))
+                .targetCurrencyResponseDto(currencyResponseMapper.toDto(exchangeRate.getTargetCurrency()))
+                .rate(exchangeRate.getRate())
+                .amount(amount)
                 .convertedAmount(convertedAmount)
+                .build();
+    }
+
+    private ExchangeRate getExchangeRate(ExchangeCurrencyRequestDto exchangeCurrencyRequestDto) {
+        String baseCurrencyCode = exchangeCurrencyRequestDto.baseCurrencyCode();
+        String targetCurrencyCode = exchangeCurrencyRequestDto.targetCurrencyCode();
+        String pivotCurrencyCode = "USD";
+
+        Optional<ExchangeRate> optionalDirectExchangeRate = exchangeRateDao
+                .findByCoupleOfCurrencyCode(baseCurrencyCode, targetCurrencyCode);
+        if (optionalDirectExchangeRate.isPresent()) {
+            return optionalDirectExchangeRate.get();
+        }
+
+        Optional<ExchangeRate> optionalReverseExchangeRate = exchangeRateDao
+                .findByCoupleOfCurrencyCode(targetCurrencyCode, baseCurrencyCode);
+        if (optionalReverseExchangeRate.isPresent()) {
+            return getExchangeRateFromReverseRate(optionalReverseExchangeRate.get());
+        }
+
+        Optional<ExchangeRate> optionalUsdBaseExchangeRate = exchangeRateDao
+                .findByCoupleOfCurrencyCode(pivotCurrencyCode, baseCurrencyCode);
+        Optional<ExchangeRate> optionalUsdTargetExchangeRate = exchangeRateDao
+                .findByCoupleOfCurrencyCode(pivotCurrencyCode, targetCurrencyCode);
+        if (optionalUsdBaseExchangeRate.isPresent() && optionalUsdTargetExchangeRate.isPresent()) {
+            return getExchangeRateViaUsd(optionalUsdBaseExchangeRate.get(), optionalUsdTargetExchangeRate.get());
+        }
+
+        throw new NotFoundException("It is impossible to exchange such currencies: "
+                                    + exchangeCurrencyRequestDto.baseCurrencyCode() + " to "
+                                    + exchangeCurrencyRequestDto.targetCurrencyCode());
+    }
+
+    private ExchangeRate getExchangeRateFromReverseRate(ExchangeRate reverseExchangeRate) {
+        Double requiredRate = 1 / reverseExchangeRate.getRate();
+        return ExchangeRate.builder()
+                .baseCurrency(reverseExchangeRate.getTargetCurrency())
+                .targetCurrency(reverseExchangeRate.getBaseCurrency())
+                .rate(requiredRate)
+                .build();
+    }
+
+    private ExchangeRate getExchangeRateViaUsd(ExchangeRate usdBaseExchangeRate, ExchangeRate usdTargetExchangeRate) {
+        Double requiredRate = usdTargetExchangeRate.getRate() / usdBaseExchangeRate.getRate();
+        return ExchangeRate.builder()
+                .baseCurrency(usdBaseExchangeRate.getTargetCurrency())
+                .targetCurrency(usdTargetExchangeRate.getTargetCurrency())
+                .rate(requiredRate)
                 .build();
     }
 }

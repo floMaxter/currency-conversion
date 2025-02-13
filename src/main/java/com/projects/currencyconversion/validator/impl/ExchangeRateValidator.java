@@ -1,5 +1,6 @@
 package com.projects.currencyconversion.validator.impl;
 
+import com.projects.currencyconversion.Utils.CommonUtils;
 import com.projects.currencyconversion.validator.ValidationError;
 import com.projects.currencyconversion.validator.ValidationResult;
 import com.projects.currencyconversion.validator.Validator;
@@ -20,20 +21,15 @@ public class ExchangeRateValidator implements Validator<String> {
                     "Exchange rate is null"));
             return validationResult;
         }
-        if (!isDouble(object)) {
+        if (!CommonUtils.isDouble(object)) {
             validationResult.add(ValidationError.of("invalid.rate",
-                    "Invalid exchange rate: " + object));
+                    "This rate is not a number: " + object));
+        }
+        if (Double.parseDouble(object) < 0) {
+            validationResult.add(ValidationError.of("invalid.rate",
+                    "The rate cannot be negative: " + object));
         }
         return validationResult;
-    }
-
-    private boolean isDouble(String value) {
-        try {
-            Double.parseDouble(value);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
     }
 
     public static ExchangeRateValidator getInstance() {

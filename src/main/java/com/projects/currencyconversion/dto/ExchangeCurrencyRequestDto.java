@@ -2,7 +2,7 @@ package com.projects.currencyconversion.dto;
 
 public record ExchangeCurrencyRequestDto(String baseCurrencyCode,
                                          String targetCurrencyCode,
-                                         Double amount) {
+                                         String amount) {
 
     public static ExchangeCurrencyRequestDtoBuilder builder() {
         return new ExchangeCurrencyRequestDtoBuilder();
@@ -21,7 +21,7 @@ public record ExchangeCurrencyRequestDto(String baseCurrencyCode,
 
         private String baseCurrencyCode;
         private String targetCurrencyCode;
-        private Double amount;
+        private String amount;
 
         public ExchangeCurrencyRequestDtoBuilder baseCurrencyCode(String baseCurrencyCode) {
             this.baseCurrencyCode = baseCurrencyCode;
@@ -33,7 +33,7 @@ public record ExchangeCurrencyRequestDto(String baseCurrencyCode,
             return this;
         }
 
-        public ExchangeCurrencyRequestDtoBuilder amount(Double amount) {
+        public ExchangeCurrencyRequestDtoBuilder amount(String amount) {
             this.amount = amount;
             return this;
         }
