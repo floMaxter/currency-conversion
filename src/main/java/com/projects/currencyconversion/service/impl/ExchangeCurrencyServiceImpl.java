@@ -5,14 +5,14 @@ import com.projects.currencyconversion.dto.ExchangeCurrencyRequestDto;
 import com.projects.currencyconversion.dto.ExchangeCurrencyResponseDto;
 import com.projects.currencyconversion.entity.ExchangeRate;
 import com.projects.currencyconversion.exception.NotFoundException;
-import com.projects.currencyconversion.exception.ValidationException;
 import com.projects.currencyconversion.mapper.impl.CurrencyResponseMapper;
 import com.projects.currencyconversion.service.ExchangeCurrencyService;
-import com.projects.currencyconversion.validator.ValidationResult;
 import com.projects.currencyconversion.validator.Validator;
 import com.projects.currencyconversion.validator.impl.ExchangeCurrencyValidator;
 
 import java.util.Optional;
+
+import static com.projects.currencyconversion.validator.ValidationUtils.validate;
 
 public class ExchangeCurrencyServiceImpl implements ExchangeCurrencyService {
 
@@ -30,22 +30,9 @@ public class ExchangeCurrencyServiceImpl implements ExchangeCurrencyService {
 
     @Override
     public ExchangeCurrencyResponseDto exchange(ExchangeCurrencyRequestDto exchangeCurrencyRequestDto) {
-        ValidationResult validationResult = exchangeCurrencyValidator.isValid(exchangeCurrencyRequestDto);
-        if (!validationResult.isValid()) {
-            throw new ValidationException(validationResult.getMessage());
-        }
-
-        // Input: String baseCode, String targetCode, String amount
-        // Validation
-        // Get exchange rate
-        //      1: AB
-        //      2: BA - take the inverse rate
-        //      3: USD-A + USD-B - convert using another rate
-        // Get amount
-        // Get rate
+        validate(exchangeCurrencyValidator.isValid(exchangeCurrencyRequestDto));
 
         ExchangeRate exchangeRate = getExchangeRate(exchangeCurrencyRequestDto);
-
         Double amount = Double.valueOf(exchangeCurrencyRequestDto.amount());
         Double convertedAmount = exchangeRate.getRate() * amount;
 
@@ -61,7 +48,6 @@ public class ExchangeCurrencyServiceImpl implements ExchangeCurrencyService {
     private ExchangeRate getExchangeRate(ExchangeCurrencyRequestDto exchangeCurrencyRequestDto) {
         String baseCurrencyCode = exchangeCurrencyRequestDto.baseCurrencyCode();
         String targetCurrencyCode = exchangeCurrencyRequestDto.targetCurrencyCode();
-        String pivotCurrencyCode = "USD";
 
         Optional<ExchangeRate> optionalDirectExchangeRate = exchangeRateDao
                 .findByCoupleOfCurrencyCode(baseCurrencyCode, targetCurrencyCode);
@@ -75,6 +61,7 @@ public class ExchangeCurrencyServiceImpl implements ExchangeCurrencyService {
             return getExchangeRateFromReverseRate(optionalReverseExchangeRate.get());
         }
 
+        String pivotCurrencyCode = "USD";
         Optional<ExchangeRate> optionalUsdBaseExchangeRate = exchangeRateDao
                 .findByCoupleOfCurrencyCode(pivotCurrencyCode, baseCurrencyCode);
         Optional<ExchangeRate> optionalUsdTargetExchangeRate = exchangeRateDao

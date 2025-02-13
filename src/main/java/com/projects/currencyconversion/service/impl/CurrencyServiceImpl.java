@@ -17,6 +17,8 @@ import com.projects.currencyconversion.validator.impl.CurrencyCodeValidator;
 import java.util.List;
 import java.util.Optional;
 
+import static com.projects.currencyconversion.validator.ValidationUtils.validate;
+
 public class CurrencyServiceImpl implements CurrencyService {
 
     private static final CurrencyServiceImpl INSTANCE = new CurrencyServiceImpl();
@@ -41,10 +43,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     public CurrencyResponseDto findByCode(String code) {
-        ValidationResult validationResult = currencyCodeValidator.isValid(code);
-        if (!validationResult.isValid()) {
-            throw new ValidationException(validationResult.getMessage());
-        }
+        validate(currencyCodeValidator.isValid(code));
 
         Optional<Currency> optionalCurrency = currencyDao.findByCode(code);
         if (optionalCurrency.isEmpty()) {
@@ -55,10 +54,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     public CurrencyResponseDto create(CurrencyRequestDto currencyRequestDto) {
-        ValidationResult validationResult = createCurrencyValidator.isValid(currencyRequestDto);
-        if (!validationResult.isValid()) {
-            throw new ValidationException(validationResult.getMessage());
-        }
+        validate(createCurrencyValidator.isValid(currencyRequestDto));
 
         Currency currency = currencyRequestMapper.toEntity(currencyRequestDto);
         Currency savedCurrency = currencyDao.save(currency);

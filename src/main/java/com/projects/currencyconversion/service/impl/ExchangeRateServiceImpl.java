@@ -19,6 +19,8 @@ import com.projects.currencyconversion.validator.impl.CreateExchangeRateValidato
 import java.util.List;
 import java.util.Optional;
 
+import static com.projects.currencyconversion.validator.ValidationUtils.validate;
+
 public class ExchangeRateServiceImpl implements ExchangeRateService {
 
     private static final ExchangeRateServiceImpl INSTANCE = new ExchangeRateServiceImpl();
@@ -44,10 +46,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
 
     @Override
     public ExchangeRateResponseDto findByCoupleOfCode(String coupleOfCode) {
-        ValidationResult codesValidationResult = coupleOfCurrencyCodeValidator.isValid(coupleOfCode);
-        if (!codesValidationResult.isValid()) {
-            throw new ValidationException(codesValidationResult.getMessage());
-        }
+        validate(coupleOfCurrencyCodeValidator.isValid(coupleOfCode));
 
         String baseCurrencyCode = coupleOfCode.substring(0, CODE_LENGTH);
         String targetCurrencyCode = coupleOfCode.substring(CODE_LENGTH);
@@ -63,10 +62,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
 
     @Override
     public ExchangeRateResponseDto create(ExchangeRateRequestDto exchangeRateRequestDto) {
-        ValidationResult validationResult = createExchangeRateValidator.isValid(exchangeRateRequestDto);
-        if (!validationResult.isValid()) {
-            throw new ValidationException(validationResult.getMessage());
-        }
+        validate(createExchangeRateValidator.isValid(exchangeRateRequestDto));
 
         ExchangeRate newExchangeRate = buildExchangeRate(exchangeRateRequestDto);
         ExchangeRate savedExchangeRate = exchangeRateDao.save(newExchangeRate);
@@ -76,10 +72,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     @Override
     public ExchangeRateResponseDto update(String coupleOfCode, String rate) {
         ExchangeRateRequestDto exchangeRateRequestDto = buildExchangeRateRequestDto(coupleOfCode, rate);
-        ValidationResult validationResult = createExchangeRateValidator.isValid(exchangeRateRequestDto);
-        if (!validationResult.isValid()) {
-            throw new ValidationException(validationResult.getMessage());
-        }
+        validate(createExchangeRateValidator.isValid(exchangeRateRequestDto));
 
         ExchangeRate newExchangeRate = buildExchangeRate(exchangeRateRequestDto);
         ExchangeRate findedExchangeRate = getExchangeRateOrThrow(
