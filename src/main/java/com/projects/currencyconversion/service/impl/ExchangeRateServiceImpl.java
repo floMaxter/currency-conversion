@@ -8,16 +8,13 @@ import com.projects.currencyconversion.dto.ExchangeRateResponseDto;
 import com.projects.currencyconversion.entity.Currency;
 import com.projects.currencyconversion.entity.ExchangeRate;
 import com.projects.currencyconversion.exception.NotFoundException;
-import com.projects.currencyconversion.exception.ValidationException;
 import com.projects.currencyconversion.mapper.impl.ExchangeRateResponseMapper;
 import com.projects.currencyconversion.service.ExchangeRateService;
-import com.projects.currencyconversion.validator.ValidationResult;
 import com.projects.currencyconversion.validator.Validator;
 import com.projects.currencyconversion.validator.impl.CoupleOfCurrencyCodeValidator;
 import com.projects.currencyconversion.validator.impl.CreateExchangeRateValidator;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.projects.currencyconversion.validator.ValidationUtils.validate;
 
@@ -51,13 +48,10 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         String baseCurrencyCode = coupleOfCode.substring(0, CODE_LENGTH);
         String targetCurrencyCode = coupleOfCode.substring(CODE_LENGTH);
 
-        Optional<ExchangeRate> optionalExchangeRate = exchangeRateDao
-                .findByCoupleOfCurrencyCode(baseCurrencyCode, targetCurrencyCode);
-        if (optionalExchangeRate.isEmpty()) {
-            throw new NotFoundException("The exchange rate with this codes was not found: " + coupleOfCode);
-        }
-
-        return exchangeRateResponseMapper.toDto(optionalExchangeRate.get());
+        return exchangeRateDao
+                .findByCoupleOfCurrencyCode(baseCurrencyCode, targetCurrencyCode)
+                .map(exchangeRateResponseMapper::toDto)
+                .orElseThrow(() -> new NotFoundException("The exchange rate with this codes was not found: " + coupleOfCode));
     }
 
     @Override

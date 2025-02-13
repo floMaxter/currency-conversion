@@ -5,17 +5,14 @@ import com.projects.currencyconversion.dto.CurrencyRequestDto;
 import com.projects.currencyconversion.dto.CurrencyResponseDto;
 import com.projects.currencyconversion.entity.Currency;
 import com.projects.currencyconversion.exception.NotFoundException;
-import com.projects.currencyconversion.exception.ValidationException;
 import com.projects.currencyconversion.mapper.impl.CurrencyRequestMapper;
 import com.projects.currencyconversion.mapper.impl.CurrencyResponseMapper;
 import com.projects.currencyconversion.service.CurrencyService;
-import com.projects.currencyconversion.validator.ValidationResult;
 import com.projects.currencyconversion.validator.Validator;
 import com.projects.currencyconversion.validator.impl.CreateCurrencyValidator;
 import com.projects.currencyconversion.validator.impl.CurrencyCodeValidator;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.projects.currencyconversion.validator.ValidationUtils.validate;
 
@@ -45,11 +42,9 @@ public class CurrencyServiceImpl implements CurrencyService {
     public CurrencyResponseDto findByCode(String code) {
         validate(currencyCodeValidator.isValid(code));
 
-        Optional<Currency> optionalCurrency = currencyDao.findByCode(code);
-        if (optionalCurrency.isEmpty()) {
-            throw new NotFoundException("The currency with this code was not found: " + code);
-        }
-        return currencyResponseMapper.toDto(optionalCurrency.get());
+        return currencyDao.findByCode(code)
+                .map(currencyResponseMapper::toDto)
+                .orElseThrow(() -> new NotFoundException("The currency with this code was not found: " + code));
     }
 
     @Override
