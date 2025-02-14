@@ -3,6 +3,7 @@ package com.projects.currencyconversion.servlet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projects.currencyconversion.dto.ExchangeRateRequestDto;
 import com.projects.currencyconversion.dto.ExchangeRateResponseDto;
+import com.projects.currencyconversion.mapper.impl.ExchangeRateHttpServletRequestMapper;
 import com.projects.currencyconversion.service.ExchangeRateService;
 import com.projects.currencyconversion.service.impl.ExchangeRateServiceImpl;
 import jakarta.servlet.annotation.WebServlet;
@@ -18,6 +19,8 @@ import java.util.List;
 public class ExchangeRatesServlet extends HttpServlet {
 
     private final ExchangeRateService exchangeRateService = ExchangeRateServiceImpl.getInstance();
+    private final ExchangeRateHttpServletRequestMapper exchangeRateHttpServletRequestMapper =
+            ExchangeRateHttpServletRequestMapper.getInstance();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -32,20 +35,12 @@ public class ExchangeRatesServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        ExchangeRateRequestDto exchangeRateRequestDto = buildExchangeRateRequestDto(req);
+        ExchangeRateRequestDto exchangeRateRequestDto = exchangeRateHttpServletRequestMapper.fromRequest(req);
 
         ExchangeRateResponseDto exchangeRateResponseDto = exchangeRateService.create(exchangeRateRequestDto);
         resp.setStatus(HttpServletResponse.SC_CREATED);
         try (PrintWriter writer = resp.getWriter()) {
             writer.write(objectMapper.writeValueAsString(exchangeRateResponseDto));
         }
-    }
-
-    private ExchangeRateRequestDto buildExchangeRateRequestDto(HttpServletRequest req) {
-        return ExchangeRateRequestDto.builder()
-                .baseCurrencyCode(req.getParameter("baseCurrencyCode"))
-                .targetCurrencyCode(req.getParameter("targetCurrencyCode"))
-                .rate(req.getParameter("rate"))
-                .build();
     }
 }
