@@ -12,7 +12,7 @@ import com.projects.currencyconversion.validator.impl.ExchangeCurrencyValidator;
 
 import java.util.Optional;
 
-import static com.projects.currencyconversion.validator.ValidationUtils.validate;
+import static com.projects.currencyconversion.Utils.ValidationUtils.validate;
 
 public class ExchangeCurrencyServiceImpl implements ExchangeCurrencyService {
 

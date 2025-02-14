@@ -16,7 +16,7 @@ import com.projects.currencyconversion.validator.impl.CreateExchangeRateValidato
 
 import java.util.List;
 
-import static com.projects.currencyconversion.validator.ValidationUtils.validate;
+import static com.projects.currencyconversion.Utils.ValidationUtils.validate;
 
 public class ExchangeRateServiceImpl implements ExchangeRateService {
 

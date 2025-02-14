@@ -15,6 +15,17 @@ public final class RequestUtils {
         return req.getRequestURI().substring(ignoreAmt + 1);
     }
 
+    public static String getParamValue(HttpServletRequest req, String paramName) {
+        String[] values = req.getParameterValues(paramName);
+        if (values == null || values.length == 0) {
+            throw new ValidationException("Missing required parameter: " + paramName);
+        }
+        if (values.length > 1) {
+            throw new ValidationException("Multiple values found for parameter: " + paramName);
+        }
+        return values[0];
+    }
+
     public static Map<String, String> getParamsFromRequestBody(HttpServletRequest req) throws IOException {
         Map<String, String> params = new HashMap<>();
         try (BufferedReader reader = req.getReader()) {
