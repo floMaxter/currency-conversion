@@ -12,7 +12,7 @@ import com.projects.currencyconversion.mapper.impl.ExchangeRateResponseMapper;
 import com.projects.currencyconversion.service.ExchangeRateService;
 import com.projects.currencyconversion.validator.Validator;
 import com.projects.currencyconversion.validator.impl.CoupleOfCurrencyCodeValidator;
-import com.projects.currencyconversion.validator.impl.CreateExchangeRateValidator;
+import com.projects.currencyconversion.validator.impl.ExchangeRateRequestDtoValidator;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     private final CurrencyDao currencyDao = CurrencyDao.getInstance();
     private final ExchangeRateResponseMapper exchangeRateResponseMapper = ExchangeRateResponseMapper.getInstance();
     private final Validator<String> coupleOfCurrencyCodeValidator = CoupleOfCurrencyCodeValidator.getInstance();
-    private final Validator<ExchangeRateRequestDto> createExchangeRateValidator = CreateExchangeRateValidator.getInstance();
+    private final Validator<ExchangeRateRequestDto> createExchangeRateValidator = ExchangeRateRequestDtoValidator.getInstance();
     private static final int CODE_LENGTH = Integer.parseInt(PropertiesUtil.get("db.currency.code.length"));
 
     private ExchangeRateServiceImpl() {

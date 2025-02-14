@@ -36,8 +36,7 @@ public class ExchangeRateServlet extends HttpServlet {
         String coupleOfCode = RequestUtils.getPathFromRequest(req);
         Map<String, String> params =  RequestUtils.getParamsFromRequestBody(req);
 
-        ExchangeRateResponseDto exchangeRateResponseDto =
-                exchangeRateService.update(coupleOfCode, params.get("rate"));
+        ExchangeRateResponseDto exchangeRateResponseDto = exchangeRateService.update(coupleOfCode, params.get("rate"));
         resp.setStatus(HttpServletResponse.SC_OK);
         try (PrintWriter writer = resp.getWriter()) {
             writer.write(objectMapper.writeValueAsString(exchangeRateResponseDto));

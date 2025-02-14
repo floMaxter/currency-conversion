@@ -6,12 +6,12 @@ import com.projects.currencyconversion.validator.ValidationError;
 import com.projects.currencyconversion.validator.ValidationResult;
 import com.projects.currencyconversion.validator.Validator;
 
-public class CreateCurrencyValidator implements Validator<CurrencyRequestDto> {
+public class CurrencyRequestDtoValidator implements Validator<CurrencyRequestDto> {
 
-    private static final CreateCurrencyValidator INSTANCE = new CreateCurrencyValidator();
+    private static final CurrencyRequestDtoValidator INSTANCE = new CurrencyRequestDtoValidator();
     private final Validator<String> currencyCodeValidator = CurrencyCodeValidator.getInstance();
 
-    private CreateCurrencyValidator() {
+    private CurrencyRequestDtoValidator() {
     }
 
     @Override
@@ -45,7 +45,7 @@ public class CreateCurrencyValidator implements Validator<CurrencyRequestDto> {
         return sign != null && sign.length() <= maxSignLength && sign.length() >= minSignLength;
     }
 
-    public static CreateCurrencyValidator getInstance() {
+    public static CurrencyRequestDtoValidator getInstance() {
         return INSTANCE;
     }
 }

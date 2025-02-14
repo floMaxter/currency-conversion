@@ -4,13 +4,13 @@ import com.projects.currencyconversion.dto.ExchangeRateRequestDto;
 import com.projects.currencyconversion.validator.ValidationResult;
 import com.projects.currencyconversion.validator.Validator;
 
-public class CreateExchangeRateValidator implements Validator<ExchangeRateRequestDto> {
+public class ExchangeRateRequestDtoValidator implements Validator<ExchangeRateRequestDto> {
 
-    private static final CreateExchangeRateValidator INSTANCE = new CreateExchangeRateValidator();
+    private static final ExchangeRateRequestDtoValidator INSTANCE = new ExchangeRateRequestDtoValidator();
     private final Validator<String> coupleOfCurrencyCodeValidator = CoupleOfCurrencyCodeValidator.getInstance();
     private final Validator<String> exchangeRateValidator = ExchangeRateValidator.getInstance();
 
-    private CreateExchangeRateValidator() {
+    private ExchangeRateRequestDtoValidator() {
     }
 
     @Override
@@ -30,7 +30,7 @@ public class CreateExchangeRateValidator implements Validator<ExchangeRateReques
         return validationResult;
     }
 
-    public static CreateExchangeRateValidator getInstance() {
+    public static ExchangeRateRequestDtoValidator getInstance() {
         return INSTANCE;
     }
 }
