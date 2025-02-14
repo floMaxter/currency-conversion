@@ -15,9 +15,9 @@ public class ExchangeCurrencyHttpServletRequestMapper implements HttpServletRequ
     @Override
     public ExchangeCurrencyRequestDto fromRequest(HttpServletRequest req) {
         return ExchangeCurrencyRequestDto.builder()
-                .baseCurrencyCode(RequestUtils.getParamValue(req, "from"))
-                .targetCurrencyCode(RequestUtils.getParamValue(req, "to"))
-                .amount(RequestUtils.getParamValue(req, "amount"))
+                .baseCurrencyCode(RequestUtils.getParamValueFromRequest(req, "from"))
+                .targetCurrencyCode(RequestUtils.getParamValueFromRequest(req, "to"))
+                .amount(RequestUtils.getParamValueFromRequest(req, "amount"))
                 .build();
     }
 

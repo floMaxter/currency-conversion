@@ -5,6 +5,7 @@ import com.projects.currencyconversion.dao.CurrencyDao;
 import com.projects.currencyconversion.dao.ExchangeRateDao;
 import com.projects.currencyconversion.dto.ExchangeRateRequestDto;
 import com.projects.currencyconversion.dto.ExchangeRateResponseDto;
+import com.projects.currencyconversion.dto.ExchangeRateUpdateDto;
 import com.projects.currencyconversion.entity.Currency;
 import com.projects.currencyconversion.entity.ExchangeRate;
 import com.projects.currencyconversion.exception.NotFoundException;
@@ -64,8 +65,9 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     }
 
     @Override
-    public ExchangeRateResponseDto update(String coupleOfCode, String rate) {
-        ExchangeRateRequestDto exchangeRateRequestDto = buildExchangeRateRequestDto(coupleOfCode, rate);
+    public ExchangeRateResponseDto update(ExchangeRateUpdateDto exchangeRateUpdateDto) {
+        ExchangeRateRequestDto exchangeRateRequestDto =
+                buildExchangeRateRequestDto(exchangeRateUpdateDto.coupleOfCode(), exchangeRateUpdateDto.rate());
         validate(createExchangeRateValidator.isValid(exchangeRateRequestDto));
 
         ExchangeRate newExchangeRate = buildExchangeRate(exchangeRateRequestDto);
