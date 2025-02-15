@@ -10,6 +10,7 @@ import com.projects.currencyconversion.entity.Currency;
 import com.projects.currencyconversion.entity.ExchangeRate;
 import com.projects.currencyconversion.exception.NotFoundException;
 import com.projects.currencyconversion.mapper.impl.ExchangeRateResponseMapper;
+import com.projects.currencyconversion.mapper.impl.ExchangeRateUpdateMapper;
 import com.projects.currencyconversion.service.ExchangeRateService;
 import com.projects.currencyconversion.validator.Validator;
 import com.projects.currencyconversion.validator.impl.CoupleOfCurrencyCodeValidator;
@@ -25,6 +26,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     private final ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
     private final CurrencyDao currencyDao = CurrencyDao.getInstance();
     private final ExchangeRateResponseMapper exchangeRateResponseMapper = ExchangeRateResponseMapper.getInstance();
+    private final ExchangeRateUpdateMapper exchangeRateUpdateMapper = ExchangeRateUpdateMapper.getInstance();
     private final Validator<String> coupleOfCurrencyCodeValidator = CoupleOfCurrencyCodeValidator.getInstance();
     private final Validator<ExchangeRateRequestDto> createExchangeRateValidator = ExchangeRateRequestDtoValidator.getInstance();
     private static final int CODE_LENGTH = Integer.parseInt(PropertiesUtil.get("db.currency.code.length"));
@@ -66,8 +68,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
 
     @Override
     public ExchangeRateResponseDto update(ExchangeRateUpdateDto exchangeRateUpdateDto) {
-        ExchangeRateRequestDto exchangeRateRequestDto =
-                buildExchangeRateRequestDto(exchangeRateUpdateDto.coupleOfCode(), exchangeRateUpdateDto.rate());
+        ExchangeRateRequestDto exchangeRateRequestDto = exchangeRateUpdateMapper.toDto(exchangeRateUpdateDto);
         validate(createExchangeRateValidator.isValid(exchangeRateRequestDto));
 
         ExchangeRate newExchangeRate = buildExchangeRate(exchangeRateRequestDto);
@@ -89,17 +90,6 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
                 .baseCurrency(baseCurrency)
                 .targetCurrency(targetCurrency)
                 .rate(Double.valueOf(exchangeRateRequestDto.rate()))
-                .build();
-    }
-
-    private ExchangeRateRequestDto buildExchangeRateRequestDto(String coupleOfCode, String rate) {
-        String baseCurrencyCode = coupleOfCode.substring(0, CODE_LENGTH);
-        String targetCurrencyCode = coupleOfCode.substring(CODE_LENGTH);
-
-        return ExchangeRateRequestDto.builder()
-                .baseCurrencyCode(baseCurrencyCode)
-                .targetCurrencyCode(targetCurrencyCode)
-                .rate(rate)
                 .build();
     }
 

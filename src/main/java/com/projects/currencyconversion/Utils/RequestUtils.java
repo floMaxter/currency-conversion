@@ -13,6 +13,9 @@ import java.util.Map;
 
 public final class RequestUtils {
 
+    private static final Integer CODE_LENGTH = Integer.parseInt(PropertiesUtil.get("db.currency.code.length"));
+    private static final String EMPTY_STRING = "";
+
     public static String getPathFromRequest(HttpServletRequest req) {
         int ignoreAmt = req.getContextPath().length() + req.getServletPath().length();
         return req.getRequestURI().substring(ignoreAmt + 1);
@@ -28,6 +31,19 @@ public final class RequestUtils {
         String[] values = extractValueFromBody(req, paramName);
         validateSingleParam(paramName, values);
         return values[0];
+    }
+
+    public static String[] getCoupleOfCurrencyCode(String coupleOfCode) {
+        String[] codes = new String[2];
+
+        if (coupleOfCode.length() < CODE_LENGTH) {
+            codes[0] = coupleOfCode;
+            codes[1] = EMPTY_STRING;
+        } else {
+            codes[0] = coupleOfCode.substring(0, CODE_LENGTH);
+            codes[1] = coupleOfCode.substring(CODE_LENGTH);
+        }
+        return codes;
     }
 
     private static void validateSingleParam(String paramName, String[] values) {

@@ -14,12 +14,9 @@ public class ExchangeRateUpdateRequestMapper implements HttpServletRequestToDtoM
 
     @Override
     public ExchangeRateUpdateDto fromRequest(HttpServletRequest req) {
-        String coupleOfCode = RequestUtils.getPathFromRequest(req);
-        String rate =  RequestUtils.getParamValueFromBody(req, "rate");
-
         return ExchangeRateUpdateDto.builder()
-                .coupleOfCode(coupleOfCode)
-                .rate(rate)
+                .coupleOfCode(RequestUtils.getPathFromRequest(req))
+                .rate(RequestUtils.getParamValueFromBody(req, "rate"))
                 .build();
     }
 
