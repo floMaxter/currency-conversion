@@ -2,13 +2,15 @@ package com.projects.currencyconversion.mapper.impl;
 
 import com.projects.currencyconversion.dto.ExchangeRateResponseDto;
 import com.projects.currencyconversion.entity.ExchangeRate;
+import com.projects.currencyconversion.mapper.EntityListToDtoListMapper;
 import com.projects.currencyconversion.mapper.EntityToDtoMapper;
 
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-public class ExchangeRateResponseMapper implements EntityToDtoMapper<ExchangeRate, ExchangeRateResponseDto> {
+public class ExchangeRateResponseMapper implements EntityToDtoMapper<ExchangeRate, ExchangeRateResponseDto>,
+        EntityListToDtoListMapper<ExchangeRate, ExchangeRateResponseDto> {
 
     private static final ExchangeRateResponseMapper INSTANCE = new ExchangeRateResponseMapper();
     private final CurrencyResponseMapper currencyResponseMapper = CurrencyResponseMapper.getInstance();

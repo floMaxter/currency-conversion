@@ -3,9 +3,10 @@ package com.projects.currencyconversion.service.impl;
 import com.projects.currencyconversion.dao.ExchangeRateDao;
 import com.projects.currencyconversion.dto.ExchangeCurrencyRequestDto;
 import com.projects.currencyconversion.dto.ExchangeCurrencyResponseDto;
+import com.projects.currencyconversion.entity.ExchangeCurrency;
 import com.projects.currencyconversion.entity.ExchangeRate;
 import com.projects.currencyconversion.exception.NotFoundException;
-import com.projects.currencyconversion.mapper.impl.CurrencyResponseMapper;
+import com.projects.currencyconversion.mapper.impl.ExchangeCurrencyResponseMapper;
 import com.projects.currencyconversion.service.ExchangeCurrencyService;
 import com.projects.currencyconversion.validator.Validator;
 import com.projects.currencyconversion.validator.impl.ExchangeCurrencyValidator;
@@ -18,7 +19,7 @@ public class ExchangeCurrencyServiceImpl implements ExchangeCurrencyService {
 
     private static final ExchangeCurrencyServiceImpl INSTANCE = new ExchangeCurrencyServiceImpl();
     private final ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
-    private final CurrencyResponseMapper currencyResponseMapper = CurrencyResponseMapper.getInstance();
+    private final ExchangeCurrencyResponseMapper exchangeCurrencyResponseMapper = ExchangeCurrencyResponseMapper.getInstance();
     private final Validator<ExchangeCurrencyRequestDto> exchangeCurrencyValidator = ExchangeCurrencyValidator.getInstance();
 
     private ExchangeCurrencyServiceImpl() {
@@ -32,18 +33,22 @@ public class ExchangeCurrencyServiceImpl implements ExchangeCurrencyService {
     public ExchangeCurrencyResponseDto exchange(ExchangeCurrencyRequestDto exchangeCurrencyRequestDto) {
         validate(exchangeCurrencyValidator.isValid(exchangeCurrencyRequestDto));
 
+        ExchangeCurrency exchangeCurrency = createExchangeCurrency(exchangeCurrencyRequestDto);
+        return exchangeCurrencyResponseMapper.toDto(exchangeCurrency);
+    }
+
+    private ExchangeCurrency createExchangeCurrency(ExchangeCurrencyRequestDto exchangeCurrencyRequestDto) {
         ExchangeRate exchangeRate = getExchangeRate(exchangeCurrencyRequestDto);
         Double amount = Double.valueOf(exchangeCurrencyRequestDto.amount());
         Double convertedAmount = exchangeRate.getRate() * amount;
 
-        return ExchangeCurrencyResponseDto.builder()
-                .baseCurrencyResponseDto(currencyResponseMapper.toDto(exchangeRate.getBaseCurrency()))
-                .targetCurrencyResponseDto(currencyResponseMapper.toDto(exchangeRate.getTargetCurrency()))
-                .rate(exchangeRate.getRate())
+        return ExchangeCurrency.builder()
+                .exchangeRate(exchangeRate)
                 .amount(amount)
                 .convertedAmount(convertedAmount)
                 .build();
     }
+
 
     private ExchangeRate getExchangeRate(ExchangeCurrencyRequestDto exchangeCurrencyRequestDto) {
         String baseCurrencyCode = exchangeCurrencyRequestDto.baseCurrencyCode();
