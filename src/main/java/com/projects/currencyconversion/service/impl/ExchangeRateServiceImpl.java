@@ -71,14 +71,12 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         ExchangeRateRequestDto exchangeRateRequestDto = exchangeRateUpdateMapper.toDto(exchangeRateUpdateDto);
         validate(createExchangeRateValidator.isValid(exchangeRateRequestDto));
 
-        ExchangeRate newExchangeRate = buildExchangeRate(exchangeRateRequestDto);
-        ExchangeRate findedExchangeRate = getExchangeRateOrThrow(
+        ExchangeRate existingExchangeRate = getExchangeRateOrThrow(
                 exchangeRateRequestDto.baseCurrencyCode(),
                 exchangeRateRequestDto.targetCurrencyCode()
         );
-        newExchangeRate.setId(findedExchangeRate.getId());
-
-        ExchangeRate updatedExchangeRate = exchangeRateDao.update(newExchangeRate);
+        existingExchangeRate.setRate(Double.valueOf(exchangeRateRequestDto.rate()));
+        ExchangeRate updatedExchangeRate = exchangeRateDao.update(existingExchangeRate);
         return exchangeRateResponseMapper.toDto(updatedExchangeRate);
     }
 
