@@ -13,7 +13,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 @WebServlet("/exchangeRate/*")
 public class ExchangeRateServlet extends HttpServlet {
@@ -29,9 +28,7 @@ public class ExchangeRateServlet extends HttpServlet {
 
         ExchangeRateResponseDto exchangeRateResponseDto = exchangeRateService.findByCoupleOfCode(coupleOfCode);
         resp.setStatus(HttpServletResponse.SC_OK);
-        try (PrintWriter writer = resp.getWriter()) {
-            writer.write(objectMapper.writeValueAsString(exchangeRateResponseDto));
-        }
+        objectMapper.writeValue(resp.getWriter(), exchangeRateResponseDto);
     }
 
     @Override
@@ -40,8 +37,6 @@ public class ExchangeRateServlet extends HttpServlet {
 
         ExchangeRateResponseDto exchangeRateResponseDto = exchangeRateService.update(exchangeRateUpdateDto);
         resp.setStatus(HttpServletResponse.SC_OK);
-        try (PrintWriter writer = resp.getWriter()) {
-            writer.write(objectMapper.writeValueAsString(exchangeRateResponseDto));
-        }
+        objectMapper.writeValue(resp.getWriter(), exchangeRateResponseDto);
     }
 }

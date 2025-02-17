@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 
 @WebServlet("/exchangeRates")
@@ -26,11 +25,8 @@ public class ExchangeRatesServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         List<ExchangeRateResponseDto> findExchangeRates = exchangeRateService.findAll();
-
         resp.setStatus(HttpServletResponse.SC_OK);
-        try (PrintWriter writer = resp.getWriter()) {
-            writer.write(objectMapper.writeValueAsString(findExchangeRates));
-        }
+        objectMapper.writeValue(resp.getWriter(), findExchangeRates);
     }
 
     @Override
@@ -39,8 +35,6 @@ public class ExchangeRatesServlet extends HttpServlet {
 
         ExchangeRateResponseDto exchangeRateResponseDto = exchangeRateService.create(exchangeRateRequestDto);
         resp.setStatus(HttpServletResponse.SC_CREATED);
-        try (PrintWriter writer = resp.getWriter()) {
-            writer.write(objectMapper.writeValueAsString(exchangeRateResponseDto));
-        }
+        objectMapper.writeValue(resp.getWriter(), exchangeRateResponseDto);
     }
 }

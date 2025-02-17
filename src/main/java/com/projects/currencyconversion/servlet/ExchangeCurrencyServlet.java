@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 @WebServlet("/exchange")
 public class ExchangeCurrencyServlet extends HttpServlet {
@@ -25,10 +24,7 @@ public class ExchangeCurrencyServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         ExchangeCurrencyRequestDto exchangeCurrencyRequestDto = exchangeCurrencyHttpServletRequestMapper.fromRequest(req);
-
         ExchangeCurrencyResponseDto exchangeCurrency = exchangeCurrencyService.exchange(exchangeCurrencyRequestDto);
-        try (PrintWriter writer = resp.getWriter()) {
-            writer.write(objectMapper.writeValueAsString(exchangeCurrency));
-        }
+        objectMapper.writeValue(resp.getWriter(), exchangeCurrency);
     }
 }

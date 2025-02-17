@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 
 @WebServlet("/currencies")
@@ -26,21 +25,16 @@ public class CurrenciesServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         List<CurrencyResponseDto> currencyDtos = currencyService.findAll();
-
         resp.setStatus(HttpServletResponse.SC_OK);
-        try (PrintWriter writer = resp.getWriter()) {
-            writer.write(objectMapper.writeValueAsString(currencyDtos));
-        }
+        objectMapper.writeValue(resp.getWriter(), currencyDtos);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         CurrencyRequestDto currencyRequestDto = currencyHttpServletRequestMapper.fromRequest(req);
-
         CurrencyResponseDto savedCurrency = currencyService.create(currencyRequestDto);
+
         resp.setStatus(HttpServletResponse.SC_CREATED);
-        try (PrintWriter writer = resp.getWriter()) {
-            writer.write(objectMapper.writeValueAsString(savedCurrency));
-        }
+        objectMapper.writeValue(resp.getWriter(), savedCurrency);
     }
 }

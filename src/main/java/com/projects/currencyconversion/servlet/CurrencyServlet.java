@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import static com.projects.currencyconversion.Utils.RequestUtils.getPathFromRequest;
 
@@ -26,8 +25,6 @@ public class CurrencyServlet extends HttpServlet {
         CurrencyResponseDto findCurrencyDto = currencyService.findByCode(code);
 
         resp.setStatus(HttpServletResponse.SC_OK);
-        try (PrintWriter writer = resp.getWriter()) {
-            writer.write(objectMapper.writeValueAsString(findCurrencyDto));
-        }
+        objectMapper.writeValue(resp.getWriter(), findCurrencyDto);
     }
 }
