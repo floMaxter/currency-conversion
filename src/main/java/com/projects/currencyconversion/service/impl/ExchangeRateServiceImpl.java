@@ -1,6 +1,7 @@
 package com.projects.currencyconversion.service.impl;
 
 import com.projects.currencyconversion.Utils.PropertiesUtil;
+import com.projects.currencyconversion.Utils.RequestUtils;
 import com.projects.currencyconversion.dao.CurrencyDao;
 import com.projects.currencyconversion.dao.ExchangeRateDao;
 import com.projects.currencyconversion.dto.ExchangeRateRequestDto;
@@ -75,7 +76,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
                 exchangeRateRequestDto.baseCurrencyCode(),
                 exchangeRateRequestDto.targetCurrencyCode()
         );
-        existingExchangeRate.setRate(Double.valueOf(exchangeRateRequestDto.rate()));
+        existingExchangeRate.setRate(RequestUtils.getDouble(exchangeRateRequestDto.rate()));
         ExchangeRate updatedExchangeRate = exchangeRateDao.update(existingExchangeRate);
         return exchangeRateResponseMapper.toDto(updatedExchangeRate);
     }
@@ -83,11 +84,12 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     private ExchangeRate buildExchangeRate(ExchangeRateRequestDto exchangeRateRequestDto) {
         Currency baseCurrency = getCurrencyOrThrow(exchangeRateRequestDto.baseCurrencyCode());
         Currency targetCurrency = getCurrencyOrThrow(exchangeRateRequestDto.targetCurrencyCode());
+        Double rate = RequestUtils.getDouble(exchangeRateRequestDto.rate());
 
         return ExchangeRate.builder()
                 .baseCurrency(baseCurrency)
                 .targetCurrency(targetCurrency)
-                .rate(Double.valueOf(exchangeRateRequestDto.rate()))
+                .rate(rate)
                 .build();
     }
 

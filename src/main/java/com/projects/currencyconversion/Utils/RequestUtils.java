@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,6 +17,7 @@ import java.util.Map;
 public final class RequestUtils {
 
     private static final Integer CODE_LENGTH = Integer.parseInt(PropertiesUtil.get("db.currency.code.length"));
+    private static final Integer SCALE = Integer.parseInt(PropertiesUtil.get("currency.scale"));
     private static final String EMPTY_STRING = "";
 
 
@@ -40,24 +43,6 @@ public final class RequestUtils {
         String targetCode = coupleOfCode.length() < CODE_LENGTH ? EMPTY_STRING : coupleOfCode.substring(CODE_LENGTH);
 
         return new CurrencyPair(baseCode, targetCode);
-    }
-
-    public static boolean canBeParsedToDouble(String value) {
-        try {
-            Double.parseDouble(value);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
-    private static void validateSingleParam(String paramName, String[] values) {
-        if (values == null || values.length == 0) {
-            throw new ValidationException("Missing required parameter: " + paramName);
-        }
-        if (values.length > 1) {
-            throw new ValidationException("Multiple values found for parameter: " + paramName);
-        }
     }
 
     private static String[] extractValueFromBody(HttpServletRequest req, String paramName) {
@@ -104,6 +89,36 @@ public final class RequestUtils {
             List<String> values = params.get(key);
             values.add(value);
             params.put(key, values);
+        }
+    }
+
+    public static boolean canBeParsedToDouble(String value) {
+        try {
+            Double.parseDouble(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    public static Double getDouble(String value) {
+        return round(Double.valueOf(value));
+    }
+
+    public static Double round(Double value) {
+        return round(BigDecimal.valueOf(value));
+    }
+
+    public static Double round(BigDecimal value) {
+        return value.setScale(SCALE, RoundingMode.HALF_UP).doubleValue();
+    }
+
+    private static void validateSingleParam(String paramName, String[] values) {
+        if (values == null || values.length == 0) {
+            throw new ValidationException("Missing required parameter: " + paramName);
+        }
+        if (values.length > 1) {
+            throw new ValidationException("Multiple values found for parameter: " + paramName);
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.projects.currencyconversion.service.impl;
 
+import com.projects.currencyconversion.Utils.RequestUtils;
 import com.projects.currencyconversion.dto.ExchangeCurrencyRequestDto;
 import com.projects.currencyconversion.dto.ExchangeCurrencyResponseDto;
 import com.projects.currencyconversion.entity.ExchangeCurrency;
@@ -46,8 +47,8 @@ public class ExchangeCurrencyServiceImpl implements ExchangeCurrencyService {
 
         if (maybeExchangeRate.isPresent()) {
             ExchangeRate exchangeRate = maybeExchangeRate.get();
-            Double amount = Double.valueOf(exchangeCurrencyRequestDto.amount());
-            Double convertedAmount = exchangeRate.getRate() * amount;
+            Double amount = RequestUtils.getDouble(exchangeCurrencyRequestDto.amount());
+            Double convertedAmount = RequestUtils.round(exchangeRate.getRate() * amount);
 
             return Optional.of(ExchangeCurrency.builder()
                     .exchangeRate(exchangeRate)
