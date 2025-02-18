@@ -7,7 +7,7 @@ import com.projects.currencyconversion.validator.Validator;
 public class ExchangeRateRequestDtoValidator implements Validator<ExchangeRateRequestDto> {
 
     private static final ExchangeRateRequestDtoValidator INSTANCE = new ExchangeRateRequestDtoValidator();
-    private final Validator<String> coupleOfCurrencyCodeValidator = CoupleOfCurrencyCodeValidator.getInstance();
+    private final Validator<String> currencyPairValidator = CurrencyPairValidator.getInstance();
     private final Validator<String> exchangeRateValidator = ExchangeRateValidator.getInstance();
 
     private ExchangeRateRequestDtoValidator() {
@@ -18,7 +18,7 @@ public class ExchangeRateRequestDtoValidator implements Validator<ExchangeRateRe
         ValidationResult validationResult = new ValidationResult();
 
         String coupleOfCode = object.baseCurrencyCode() + object.targetCurrencyCode();
-        ValidationResult coupleOfCodeValidationResult = coupleOfCurrencyCodeValidator.isValid(coupleOfCode);
+        ValidationResult coupleOfCodeValidationResult = currencyPairValidator.isValid(coupleOfCode);
         if (!coupleOfCodeValidationResult.isValid()) {
             validationResult.add(coupleOfCodeValidationResult.getErrors());
         }

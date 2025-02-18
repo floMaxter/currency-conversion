@@ -15,7 +15,7 @@ public class DirectExchangeRateProvider extends ExchangeRateProvider {
 
     @Override
     public Optional<ExchangeRate> getExchangeRate(String baseCurrencyCode, String targetCurrencyCode) {
-        return exchangeRateDao.findByCoupleOfCurrencyCode(baseCurrencyCode, targetCurrencyCode)
+        return exchangeRateDao.findByCurrencyPair(baseCurrencyCode, targetCurrencyCode)
                 .or(() -> checkNext(baseCurrencyCode, targetCurrencyCode));
     }
 }

@@ -3,6 +3,7 @@ package com.projects.currencyconversion.mapper.impl;
 import com.projects.currencyconversion.Utils.RequestUtils;
 import com.projects.currencyconversion.dto.ExchangeRateRequestDto;
 import com.projects.currencyconversion.dto.ExchangeRateUpdateDto;
+import com.projects.currencyconversion.entity.CurrencyPair;
 import com.projects.currencyconversion.mapper.DtoToDtoMapper;
 
 public class ExchangeRateUpdateMapper implements DtoToDtoMapper<ExchangeRateUpdateDto, ExchangeRateRequestDto> {
@@ -14,10 +15,10 @@ public class ExchangeRateUpdateMapper implements DtoToDtoMapper<ExchangeRateUpda
 
     @Override
     public ExchangeRateRequestDto toDto(ExchangeRateUpdateDto baseDto) {
-        String[] coupleOfCode = RequestUtils.getCoupleOfCurrencyCode(baseDto.coupleOfCode());
+        CurrencyPair currencyPair = RequestUtils.getCurrencyPair(baseDto.coupleOfCode());
         return ExchangeRateRequestDto.builder()
-                .baseCurrencyCode(coupleOfCode[0])
-                .targetCurrencyCode(coupleOfCode[1])
+                .baseCurrencyCode(currencyPair.baseCurrencyCode())
+                .targetCurrencyCode(currencyPair.targetCurrencyCode())
                 .rate(baseDto.rate())
                 .build();
     }

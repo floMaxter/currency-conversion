@@ -6,7 +6,7 @@ import com.projects.currencyconversion.dao.ExchangeRateDao;
 import com.projects.currencyconversion.entity.Currency;
 import com.projects.currencyconversion.entity.ExchangeRate;
 import com.projects.currencyconversion.validator.ValidationResult;
-import com.projects.currencyconversion.validator.impl.CoupleOfCurrencyCodeValidator;
+import com.projects.currencyconversion.validator.impl.CurrencyPairValidator;
 
 import java.sql.SQLException;
 import java.util.Optional;
@@ -18,12 +18,12 @@ public class Main {
 
     private static void findExchangeRateDaoTest() {
         ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
-        var findExchangeRate = exchangeRateDao.findByCoupleOfCurrencyCode("USD", "RUB");
+        var findExchangeRate = exchangeRateDao.findByCurrencyPair("USD", "RUB");
         findExchangeRate.ifPresent(System.out::println);
     }
 
     private static void coupleOfCodeValidationTest() {
-        CoupleOfCurrencyCodeValidator validator = CoupleOfCurrencyCodeValidator.getInstance();
+        CurrencyPairValidator validator = CurrencyPairValidator.getInstance();
         ValidationResult validationResult = validator.isValid("RUBUSDD");
         System.out.println(validationResult.isValid());
     }

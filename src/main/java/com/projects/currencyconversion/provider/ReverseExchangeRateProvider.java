@@ -15,7 +15,7 @@ public class ReverseExchangeRateProvider extends ExchangeRateProvider {
 
     @Override
     public Optional<ExchangeRate> getExchangeRate(String baseCurrencyCode, String targetCurrencyCode) {
-        return exchangeRateDao.findByCoupleOfCurrencyCode(targetCurrencyCode, baseCurrencyCode)
+        return exchangeRateDao.findByCurrencyPair(targetCurrencyCode, baseCurrencyCode)
                 .map(rate -> ExchangeRate.builder()
                         .id(rate.getId())
                         .baseCurrency(rate.getTargetCurrency())

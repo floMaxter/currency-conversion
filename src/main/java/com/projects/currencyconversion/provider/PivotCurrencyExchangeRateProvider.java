@@ -17,8 +17,8 @@ public class PivotCurrencyExchangeRateProvider extends ExchangeRateProvider {
 
     @Override
     public Optional<ExchangeRate> getExchangeRate(String baseCurrencyCode, String targetCurrencyCode) {
-        Optional<ExchangeRate> usdBaseRate = exchangeRateDao.findByCoupleOfCurrencyCode(pivotCurrencyCode, baseCurrencyCode);
-        Optional<ExchangeRate> usdTargetRate = exchangeRateDao.findByCoupleOfCurrencyCode(pivotCurrencyCode, targetCurrencyCode);
+        Optional<ExchangeRate> usdBaseRate = exchangeRateDao.findByCurrencyPair(pivotCurrencyCode, baseCurrencyCode);
+        Optional<ExchangeRate> usdTargetRate = exchangeRateDao.findByCurrencyPair(pivotCurrencyCode, targetCurrencyCode);
         if (usdBaseRate.isPresent() && usdTargetRate.isPresent()) {
             return Optional.of(getExchangeRateViaUsd(usdBaseRate.get(), usdTargetRate.get()));
         }

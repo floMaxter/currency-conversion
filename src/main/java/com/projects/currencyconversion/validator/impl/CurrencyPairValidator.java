@@ -1,38 +1,39 @@
 package com.projects.currencyconversion.validator.impl;
 
 import com.projects.currencyconversion.Utils.RequestUtils;
+import com.projects.currencyconversion.entity.CurrencyPair;
 import com.projects.currencyconversion.validator.ValidationError;
 import com.projects.currencyconversion.validator.ValidationResult;
 import com.projects.currencyconversion.validator.Validator;
 
-public class CoupleOfCurrencyCodeValidator implements Validator<String> {
+public class CurrencyPairValidator implements Validator<String> {
 
-    private static final CoupleOfCurrencyCodeValidator INSTANCE = new CoupleOfCurrencyCodeValidator();
+    private static final CurrencyPairValidator INSTANCE = new CurrencyPairValidator();
     private final Validator<String> currencyCodeValidator = CurrencyCodeValidator.getInstance();
 
-    private CoupleOfCurrencyCodeValidator() {
+    private CurrencyPairValidator() {
     }
 
     @Override
     public ValidationResult isValid(String object) {
         ValidationResult validationResult = new ValidationResult();
 
-        String[] codes = RequestUtils.getCoupleOfCurrencyCode(object);
-        ValidationResult baseCodeValidationResult = currencyCodeValidator.isValid(codes[0]);
+        CurrencyPair currencyPair = RequestUtils.getCurrencyPair(object);
+        ValidationResult baseCodeValidationResult = currencyCodeValidator.isValid(currencyPair.baseCurrencyCode());
         if (!baseCodeValidationResult.isValid()) {
             validationResult.add(ValidationError.of("invalid.code",
-                    "Base currency code is invalid: " + codes[0]));
+                    "Base currency code is invalid: " + currencyPair.baseCurrencyCode()));
         }
-        ValidationResult targetCodeValidationResult = currencyCodeValidator.isValid(codes[1]);
+        ValidationResult targetCodeValidationResult = currencyCodeValidator.isValid(currencyPair.targetCurrencyCode());
         if (!targetCodeValidationResult.isValid()) {
             validationResult.add(ValidationError.of("invalid.code",
-                    "Target currency code is invalid: " + codes[1]));
+                    "Target currency code is invalid: " + currencyPair.targetCurrencyCode()));
         }
 
         return validationResult;
     }
 
-    public static CoupleOfCurrencyCodeValidator getInstance() {
+    public static CurrencyPairValidator getInstance() {
         return INSTANCE;
     }
 }

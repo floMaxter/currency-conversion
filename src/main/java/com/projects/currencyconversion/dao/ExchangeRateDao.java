@@ -169,17 +169,15 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
                 .build();
     }
 
-    public Optional<ExchangeRate> findByCoupleOfCurrencyCode(String baseCurrencyCode, String targetCurrencyCode) {
+    public Optional<ExchangeRate> findByCurrencyPair(String baseCurrencyCode, String targetCurrencyCode) {
         try (Connection connection = ConnectionManager.get()) {
-            return findByCoupleOfCurrencyCode(baseCurrencyCode, targetCurrencyCode, connection);
+            return findByCurrencyPair(baseCurrencyCode, targetCurrencyCode, connection);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public Optional<ExchangeRate> findByCoupleOfCurrencyCode(String baseCurrencyCode,
-                                                             String targetCurrencyCode,
-                                                             Connection connection) {
+    public Optional<ExchangeRate> findByCurrencyPair(String baseCurrencyCode, String targetCurrencyCode, Connection connection) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_COUPLE_OF_CODES_SQL)) {
             preparedStatement.setString(1, baseCurrencyCode);
             preparedStatement.setString(2, targetCurrencyCode);

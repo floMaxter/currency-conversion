@@ -1,5 +1,6 @@
 package com.projects.currencyconversion.Utils;
 
+import com.projects.currencyconversion.entity.CurrencyPair;
 import com.projects.currencyconversion.exception.ValidationException;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -33,17 +34,11 @@ public final class RequestUtils {
         return values[0];
     }
 
-    public static String[] getCoupleOfCurrencyCode(String coupleOfCode) {
-        String[] codes = new String[2];
+    public static CurrencyPair getCurrencyPair(String coupleOfCode) {
+        String baseCode = coupleOfCode.length() < CODE_LENGTH ? coupleOfCode : coupleOfCode.substring(0, CODE_LENGTH);
+        String targetCode = coupleOfCode.length() < CODE_LENGTH ? EMPTY_STRING : coupleOfCode.substring(CODE_LENGTH);
 
-        if (coupleOfCode.length() < CODE_LENGTH) {
-            codes[0] = coupleOfCode;
-            codes[1] = EMPTY_STRING;
-        } else {
-            codes[0] = coupleOfCode.substring(0, CODE_LENGTH);
-            codes[1] = coupleOfCode.substring(CODE_LENGTH);
-        }
-        return codes;
+        return new CurrencyPair(baseCode, targetCode);
     }
 
     private static void validateSingleParam(String paramName, String[] values) {

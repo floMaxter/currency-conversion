@@ -9,7 +9,7 @@ import com.projects.currencyconversion.validator.Validator;
 public class ExchangeCurrencyValidator implements Validator<ExchangeCurrencyRequestDto> {
 
     private static final ExchangeCurrencyValidator INSTANCE = new ExchangeCurrencyValidator();
-    private final Validator<String> coupleOfCurrencyCodeValidator = CoupleOfCurrencyCodeValidator.getInstance();
+    private final Validator<String> currencyPairValidator = CurrencyPairValidator.getInstance();
 
     private ExchangeCurrencyValidator() {
     }
@@ -19,7 +19,7 @@ public class ExchangeCurrencyValidator implements Validator<ExchangeCurrencyRequ
         ValidationResult validationResult = new ValidationResult();
 
         String coupleOfCode = object.baseCurrencyCode() + object.targetCurrencyCode();
-        ValidationResult coupleOfCodeValidationResult = coupleOfCurrencyCodeValidator.isValid(coupleOfCode);
+        ValidationResult coupleOfCodeValidationResult = currencyPairValidator.isValid(coupleOfCode);
         if (!coupleOfCodeValidationResult.isValid()) {
             validationResult.add(coupleOfCodeValidationResult.getErrors());
         }
