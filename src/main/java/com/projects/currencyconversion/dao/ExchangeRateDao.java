@@ -128,7 +128,7 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
 
             List<ExchangeRate> exchangeRates = new ArrayList<>();
             while (resultSet.next()) {
-                exchangeRates.add(buildExchangeRatesUsingDao(resultSet));
+                exchangeRates.add(buildExchangeRateWithDaoLookup(resultSet));
             }
             return exchangeRates;
         } catch (SQLException e) {
@@ -152,7 +152,7 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
             ResultSet resultSet = preparedStatement.executeQuery();
             ExchangeRate findExchangeRate = null;
             if (resultSet.next()) {
-                findExchangeRate = buildExchangeRatesUsingDao(resultSet);
+                findExchangeRate = buildExchangeRateWithDaoLookup(resultSet);
             }
             return Optional.ofNullable(findExchangeRate);
         } catch (SQLException e) {
@@ -160,7 +160,7 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
         }
     }
 
-    private ExchangeRate buildExchangeRatesUsingDao(ResultSet resultSet) throws SQLException {
+    private ExchangeRate buildExchangeRateWithDaoLookup(ResultSet resultSet) throws SQLException {
         return ExchangeRate.builder()
                 .id(resultSet.getLong("id"))
                 .baseCurrency(currencyDao.findById(resultSet.getLong("c_base_currency_id")).orElse(null))
@@ -185,7 +185,7 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
             ResultSet resultSet = preparedStatement.executeQuery();
             ExchangeRate findExchangeRate = null;
             if (resultSet.next()) {
-                findExchangeRate = buildExchangeRateFromJoin(resultSet);
+                findExchangeRate = mapExchangeRateFromResultSet(resultSet);
             }
             return Optional.ofNullable(findExchangeRate);
         } catch (SQLException e) {
@@ -193,7 +193,7 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
         }
     }
 
-    private ExchangeRate buildExchangeRateFromJoin(ResultSet resultSet) throws SQLException {
+    private ExchangeRate mapExchangeRateFromResultSet(ResultSet resultSet) throws SQLException {
         Currency baseCurrency = Currency.builder()
                 .id(resultSet.getLong("base_currency_id"))
                 .code(resultSet.getString("base_currency_code"))
