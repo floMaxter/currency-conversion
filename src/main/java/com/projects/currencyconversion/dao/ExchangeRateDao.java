@@ -70,15 +70,8 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
 
     @Override
     public ExchangeRate save(ExchangeRate exchangeRate) {
-        try (Connection connection = ConnectionManager.get()) {
-            return save(exchangeRate, connection);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public ExchangeRate save(ExchangeRate exchangeRate, Connection connection) {
-        try (PreparedStatement preparedStatement =
+        try (Connection connection = ConnectionManager.get();
+             PreparedStatement preparedStatement =
                      connection.prepareStatement(SAVE_SQL, PreparedStatement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setLong(1, exchangeRate.getBaseCurrency().getId());
             preparedStatement.setLong(2, exchangeRate.getTargetCurrency().getId());
@@ -105,15 +98,8 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
 
     @Override
     public List<ExchangeRate> findAll() {
-        try (Connection connection = ConnectionManager.get()) {
-            return findAll(connection);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public List<ExchangeRate> findAll(Connection connection) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL)) {
+        try (Connection connection = ConnectionManager.get();
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             List<ExchangeRate> exchangeRates = new ArrayList<>();
@@ -140,15 +126,8 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
     }
 
     public Optional<ExchangeRate> findByCurrencyPair(String baseCurrencyCode, String targetCurrencyCode) {
-        try (Connection connection = ConnectionManager.get()) {
-            return findByCurrencyPair(baseCurrencyCode, targetCurrencyCode, connection);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public Optional<ExchangeRate> findByCurrencyPair(String baseCurrencyCode, String targetCurrencyCode, Connection connection) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_COUPLE_OF_CODES_SQL)) {
+        try (Connection connection = ConnectionManager.get();
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_COUPLE_OF_CODES_SQL)) {
             preparedStatement.setString(1, baseCurrencyCode);
             preparedStatement.setString(2, targetCurrencyCode);
 
@@ -186,15 +165,8 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
 
     @Override
     public ExchangeRate update(ExchangeRate exchangeRate) {
-        try (Connection connection = ConnectionManager.get()) {
-            return update(exchangeRate, connection);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public ExchangeRate update(ExchangeRate exchangeRate, Connection connection) {
-        try (PreparedStatement preparedStatement =
+        try (Connection connection = ConnectionManager.get();
+             PreparedStatement preparedStatement =
                      connection.prepareStatement(UPDATE_SQL, PreparedStatement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setLong(1, exchangeRate.getBaseCurrency().getId());
             preparedStatement.setLong(2, exchangeRate.getTargetCurrency().getId());

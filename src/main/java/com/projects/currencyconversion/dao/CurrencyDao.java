@@ -54,16 +54,8 @@ public class CurrencyDao implements Dao<Long, Currency> {
 
     @Override
     public Currency save(Currency currency) {
-        try (Connection connection = ConnectionManager.get()) {
-            return save(currency, connection);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public Currency save(Currency currency, Connection connection) {
-        try (PreparedStatement preparedStatement =
-                     connection.prepareStatement(SAVE_SQL, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection connection = ConnectionManager.get();
+             PreparedStatement preparedStatement = connection.prepareStatement(SAVE_SQL, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, currency.getCode());
             preparedStatement.setString(2, currency.getFullName());
             preparedStatement.setString(3, currency.getSign());
@@ -86,15 +78,8 @@ public class CurrencyDao implements Dao<Long, Currency> {
 
     @Override
     public List<Currency> findAll() {
-        try (Connection connection = ConnectionManager.get()) {
-            return findAll(connection);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public List<Currency> findAll(Connection connection) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL)) {
+        try (Connection connection = ConnectionManager.get();
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             List<Currency> currencies = new ArrayList<>();
@@ -108,15 +93,8 @@ public class CurrencyDao implements Dao<Long, Currency> {
     }
 
     public Optional<Currency> findById(Long id) {
-        try (Connection connection = ConnectionManager.get()) {
-            return findById(id, connection);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public Optional<Currency> findById(Long id, Connection connection) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL)) {
+        try (Connection connection = ConnectionManager.get();
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL)) {
             preparedStatement.setLong(1, id);
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -132,16 +110,8 @@ public class CurrencyDao implements Dao<Long, Currency> {
     }
 
     public Optional<Currency> findByCode(String code) {
-        try (Connection connection = ConnectionManager.get()) {
-            return findByCode(code, connection);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    public Optional<Currency> findByCode(String code, Connection connection) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_CODE_SQL)) {
+        try (Connection connection = ConnectionManager.get();
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_CODE_SQL)) {
             preparedStatement.setString(1, code);
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -167,16 +137,8 @@ public class CurrencyDao implements Dao<Long, Currency> {
 
     @Override
     public Currency update(Currency currency) {
-        try (Connection connection = ConnectionManager.get()) {
-            return update(currency, connection);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public Currency update(Currency currency, Connection connection) {
-        try (PreparedStatement preparedStatement
-                     = connection.prepareStatement(UPDATE_SQL, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection connection = ConnectionManager.get();
+             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SQL, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, currency.getCode());
             preparedStatement.setString(2, currency.getFullName());
             preparedStatement.setString(3, currency.getSign());
