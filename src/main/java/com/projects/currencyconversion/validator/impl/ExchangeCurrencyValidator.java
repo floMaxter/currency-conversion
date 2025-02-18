@@ -1,6 +1,6 @@
 package com.projects.currencyconversion.validator.impl;
 
-import com.projects.currencyconversion.Utils.CommonUtils;
+import com.projects.currencyconversion.Utils.RequestUtils;
 import com.projects.currencyconversion.dto.ExchangeCurrencyRequestDto;
 import com.projects.currencyconversion.validator.ValidationError;
 import com.projects.currencyconversion.validator.ValidationResult;
@@ -32,7 +32,7 @@ public class ExchangeCurrencyValidator implements Validator<ExchangeCurrencyRequ
     }
 
     private boolean isValidAmount(String amount) {
-        return amount != null && CommonUtils.isDouble(amount) && Double.parseDouble(amount) > 0;
+        return amount != null && RequestUtils.canBeParsedToDouble(amount) && Double.parseDouble(amount) > 0;
     }
 
     public static ExchangeCurrencyValidator getInstance() {

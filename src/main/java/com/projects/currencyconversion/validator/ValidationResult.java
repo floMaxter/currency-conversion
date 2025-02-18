@@ -30,7 +30,7 @@ public class ValidationResult {
 
     public String getMessage() {
         return this.errors.stream()
-                .map(error -> error.code() + ": " + error.message())
+                .map(ValidationError::message)
                 .collect(Collectors.joining("; "));
     }
 

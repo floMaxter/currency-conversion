@@ -17,6 +17,7 @@ public final class RequestUtils {
     private static final Integer CODE_LENGTH = Integer.parseInt(PropertiesUtil.get("db.currency.code.length"));
     private static final String EMPTY_STRING = "";
 
+
     public static String getPathFromRequest(HttpServletRequest req) {
         int ignoreAmt = req.getContextPath().length() + req.getServletPath().length();
         return req.getRequestURI().substring(ignoreAmt + 1);
@@ -39,6 +40,15 @@ public final class RequestUtils {
         String targetCode = coupleOfCode.length() < CODE_LENGTH ? EMPTY_STRING : coupleOfCode.substring(CODE_LENGTH);
 
         return new CurrencyPair(baseCode, targetCode);
+    }
+
+    public static boolean canBeParsedToDouble(String value) {
+        try {
+            Double.parseDouble(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     private static void validateSingleParam(String paramName, String[] values) {
