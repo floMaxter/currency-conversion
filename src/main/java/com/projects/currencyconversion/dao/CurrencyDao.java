@@ -45,11 +45,6 @@ public class CurrencyDao implements Dao<Long, Currency> {
             WHERE id = ?
             """;
 
-    private static final String DELETE_SQL = """
-            DELETE FROM t_currencies
-            WHERE ID = ?
-            """;
-
     private CurrencyDao() {
     }
 
@@ -112,7 +107,6 @@ public class CurrencyDao implements Dao<Long, Currency> {
         }
     }
 
-    @Override
     public Optional<Currency> findById(Long id) {
         try (Connection connection = ConnectionManager.get()) {
             return findById(id, connection);
@@ -195,24 +189,6 @@ public class CurrencyDao implements Dao<Long, Currency> {
                 currency.setId(generatedKeys.getLong(1));
             }
             return currency;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public boolean delete(Long id) {
-        try (Connection connection = ConnectionManager.get()) {
-            return delete(id, connection);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public boolean delete(Long id, Connection connection) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_SQL)) {
-            preparedStatement.setLong(1, id);
-            return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
