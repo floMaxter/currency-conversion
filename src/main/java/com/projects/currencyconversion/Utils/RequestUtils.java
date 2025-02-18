@@ -22,6 +22,9 @@ public final class RequestUtils {
 
 
     public static String getPathFromRequest(HttpServletRequest req) {
+        if (req.getPathInfo() == null) {
+            throw new ValidationException("The path to the resource is missing in the request.");
+        }
         int ignoreAmt = req.getContextPath().length() + req.getServletPath().length();
         return req.getRequestURI().substring(ignoreAmt + 1);
     }
