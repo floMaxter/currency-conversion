@@ -1,6 +1,6 @@
 package com.projects.currencyconversion.dto;
 
-public record CurrencyRequestDto(String code, String name, String sign) {
+public record CurrencyRequestDto(String name, String code, String sign) {
 
     public static CurrencyRequestDtoBuilder builder() {
         return new CurrencyRequestDtoBuilder();
@@ -17,8 +17,8 @@ public record CurrencyRequestDto(String code, String name, String sign) {
 
     public static class CurrencyRequestDtoBuilder {
 
-        private String code;
         private String name;
+        private String code;
         private String sign;
 
         public CurrencyRequestDtoBuilder name(String name) {
@@ -37,7 +37,7 @@ public record CurrencyRequestDto(String code, String name, String sign) {
         }
 
         public CurrencyRequestDto build() {
-            return new CurrencyRequestDto(code, name, sign);
+            return new CurrencyRequestDto(name, code, sign);
         }
     }
 }

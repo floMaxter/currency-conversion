@@ -24,7 +24,9 @@ public class ExchangeCurrencyServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         ExchangeCurrencyRequestDto exchangeCurrencyRequestDto = exchangeCurrencyHttpServletRequestMapper.fromRequest(req);
-        ExchangeCurrencyResponseDto exchangeCurrency = exchangeCurrencyService.exchange(exchangeCurrencyRequestDto);
-        objectMapper.writeValue(resp.getWriter(), exchangeCurrency);
+
+        ExchangeCurrencyResponseDto findExchangeCurrency = exchangeCurrencyService.exchange(exchangeCurrencyRequestDto);
+        resp.setStatus(HttpServletResponse.SC_OK);
+        objectMapper.writeValue(resp.getWriter(), findExchangeCurrency);
     }
 }

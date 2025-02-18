@@ -163,12 +163,12 @@ public class CurrencyDao implements Dao<Long, Currency> {
     }
 
     private static Currency buildCurrency(ResultSet resultSet) throws SQLException {
-        return new Currency(
-                resultSet.getLong("id"),
-                resultSet.getString("c_code"),
-                resultSet.getString("c_full_name"),
-                resultSet.getString("c_code")
-        );
+        return Currency.builder()
+                .id(resultSet.getLong("id"))
+                .fullName(resultSet.getString("c_full_name"))
+                .code(resultSet.getString("c_code"))
+                .sign(resultSet.getString("c_sign"))
+                .build();
     }
 
     @Override

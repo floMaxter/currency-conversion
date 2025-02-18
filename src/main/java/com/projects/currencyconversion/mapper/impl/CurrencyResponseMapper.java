@@ -34,11 +34,11 @@ public class CurrencyResponseMapper implements EntityToDtoMapper<Currency, Curre
     @Override
     public List<CurrencyResponseDto> toDto(List<Currency> entities) {
         return entities.stream()
-                .map(currency -> new CurrencyResponseDto(
-                        currency.getId(),
-                        currency.getCode(),
-                        currency.getFullName(),
-                        currency.getSign()
-                )).collect(toList());
+                .map(currency -> CurrencyResponseDto.builder()
+                        .id(currency.getId())
+                        .name(currency.getFullName())
+                        .code(currency.getCode())
+                        .sign(currency.getSign())
+                        .build()).collect(toList());
     }
 }

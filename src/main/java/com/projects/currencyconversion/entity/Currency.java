@@ -3,14 +3,14 @@ package com.projects.currencyconversion.entity;
 public class Currency {
 
     private Long id;
-    private String code;
     private String fullName;
+    private String code;
     private String sign;
 
     private Currency() {
     }
 
-    public Currency(Long id, String code, String fullName, String sign) {
+    public Currency(Long id, String fullName, String code, String sign) {
         this.id = id;
         this.code = code;
         this.fullName = fullName;
@@ -66,8 +66,8 @@ public class Currency {
     public static class CurrencyBuilder {
 
         private Long id;
-        private String code;
         private String fullName;
+        private String code;
         private String sign;
 
         public CurrencyBuilder id(Long id) {
@@ -91,7 +91,7 @@ public class Currency {
         }
 
         public Currency build() {
-            return new Currency(id, code, fullName, sign);
+            return new Currency(id, fullName, code, sign);
         }
     }
 }

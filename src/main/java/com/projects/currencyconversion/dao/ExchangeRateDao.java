@@ -161,12 +161,12 @@ public class ExchangeRateDao implements Dao<Long, ExchangeRate> {
     }
 
     private ExchangeRate buildExchangeRatesUsingDao(ResultSet resultSet) throws SQLException {
-        return new ExchangeRate(
-                resultSet.getLong("id"),
-                currencyDao.findById(resultSet.getLong("c_base_currency_id")).orElse(null),
-                currencyDao.findById(resultSet.getLong("c_target_currency_id")).orElse(null),
-                resultSet.getDouble("c_rate")
-        );
+        return ExchangeRate.builder()
+                .id(resultSet.getLong("id"))
+                .baseCurrency(currencyDao.findById(resultSet.getLong("c_base_currency_id")).orElse(null))
+                .targetCurrency(currencyDao.findById(resultSet.getLong("c_target_currency_id")).orElse(null))
+                .rate(resultSet.getDouble("c_rate"))
+                .build();
     }
 
     public Optional<ExchangeRate> findByCoupleOfCurrencyCode(String baseCurrencyCode, String targetCurrencyCode) {

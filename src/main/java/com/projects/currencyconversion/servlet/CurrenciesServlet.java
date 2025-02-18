@@ -32,8 +32,8 @@ public class CurrenciesServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         CurrencyRequestDto currencyRequestDto = currencyHttpServletRequestMapper.fromRequest(req);
-        CurrencyResponseDto savedCurrency = currencyService.create(currencyRequestDto);
 
+        CurrencyResponseDto savedCurrency = currencyService.create(currencyRequestDto);
         resp.setStatus(HttpServletResponse.SC_CREATED);
         objectMapper.writeValue(resp.getWriter(), savedCurrency);
     }

@@ -1,7 +1,7 @@
 package com.projects.currencyconversion.dto;
 
-public record ExchangeCurrencyResponseDto(CurrencyResponseDto baseCurrencyResponseDto,
-                                          CurrencyResponseDto targetCurrencyResponseDto,
+public record ExchangeCurrencyResponseDto(CurrencyResponseDto baseCurrency,
+                                          CurrencyResponseDto targetCurrency,
                                           Double rate,
                                           Double amount,
                                           Double convertedAmount) {
@@ -13,8 +13,8 @@ public record ExchangeCurrencyResponseDto(CurrencyResponseDto baseCurrencyRespon
     @Override
     public String toString() {
         return "ExchangeCurrencyResponseDto{" +
-               "baseCurrencyResponseDto=" + baseCurrencyResponseDto +
-               ", targetCurrencyResponseDto=" + targetCurrencyResponseDto +
+               "baseCurrency=" + baseCurrency +
+               ", targetCurrency=" + targetCurrency +
                ", rate=" + rate +
                ", amount=" + amount +
                ", convertedAmount=" + convertedAmount +
@@ -22,21 +22,19 @@ public record ExchangeCurrencyResponseDto(CurrencyResponseDto baseCurrencyRespon
     }
 
     public static class ExchangeCurrencyResponseDtoBuilder {
-        private CurrencyResponseDto baseCurrencyResponseDto;
-        private CurrencyResponseDto targetCurrencyResponseDto;
+        private CurrencyResponseDto baseCurrency;
+        private CurrencyResponseDto targetCurrency;
         private Double rate;
         private Double amount;
         private Double convertedAmount;
 
-        public ExchangeCurrencyResponseDtoBuilder baseCurrencyResponseDto(
-                CurrencyResponseDto baseCurrencyResponseDto) {
-            this.baseCurrencyResponseDto = baseCurrencyResponseDto;
+        public ExchangeCurrencyResponseDtoBuilder baseCurrencyResponseDto(CurrencyResponseDto baseCurrency) {
+            this.baseCurrency = baseCurrency;
             return this;
         }
 
-        public ExchangeCurrencyResponseDtoBuilder targetCurrencyResponseDto(
-                CurrencyResponseDto targetCurrencyResponseDto) {
-            this.targetCurrencyResponseDto = targetCurrencyResponseDto;
+        public ExchangeCurrencyResponseDtoBuilder targetCurrencyResponseDto(CurrencyResponseDto targetCurrency) {
+            this.targetCurrency = targetCurrency;
             return this;
         }
 
@@ -57,8 +55,8 @@ public record ExchangeCurrencyResponseDto(CurrencyResponseDto baseCurrencyRespon
 
         public ExchangeCurrencyResponseDto build() {
             return new ExchangeCurrencyResponseDto(
-                    baseCurrencyResponseDto,
-                    targetCurrencyResponseDto,
+                    baseCurrency,
+                    targetCurrency,
                     rate,
                     amount,
                     convertedAmount

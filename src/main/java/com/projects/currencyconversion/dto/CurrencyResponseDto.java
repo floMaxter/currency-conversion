@@ -1,6 +1,6 @@
 package com.projects.currencyconversion.dto;
 
-public record CurrencyResponseDto(Long id, String code, String name, String sign) {
+public record CurrencyResponseDto(Long id, String name, String code, String sign) {
 
     public static CurrencyResponseDtoBuilder builder() {
         return new CurrencyResponseDtoBuilder();
@@ -45,7 +45,7 @@ public record CurrencyResponseDto(Long id, String code, String name, String sign
         }
 
         public CurrencyResponseDto build() {
-            return new CurrencyResponseDto(id, code, name, sign);
+            return new CurrencyResponseDto(id, name, code, sign);
         }
     }
 }
