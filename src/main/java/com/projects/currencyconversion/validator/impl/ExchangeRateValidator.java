@@ -24,6 +24,7 @@ public class ExchangeRateValidator implements Validator<String> {
         if (!RequestUtils.canBeParsedToDouble(object)) {
             validationResult.add(ValidationError.of("invalid.rate",
                     "This rate is not a number: " + object));
+            return validationResult;
         }
         if (Double.parseDouble(object) < 0) {
             validationResult.add(ValidationError.of("invalid.rate",
