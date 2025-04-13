@@ -3,19 +3,7 @@
 
 # Maven
 target/
-mvnw
-mvnw.cmd
-.mvn/
 *.log
-*maven-wrapper.jar
-
-# Spring Boot
-spring-boot-starter-*/target/
-spring-boot-starter-*/build/
-!spring-boot-starter-*/target/*.jar
-!spring-boot-starter-*/target/*/
-!spring-boot-starter-*/target/classes/
-!spring-boot-starter-*/target/test-classes/
 
 # General
 .DS_Store
@@ -28,3 +16,7 @@ spring-boot-starter-*/build/
 *.swp
 *~
 .env
+*.db
+
+# Temp
+/src/main/java/com/projects/tennisscoreboard/HibernateRunner.java
