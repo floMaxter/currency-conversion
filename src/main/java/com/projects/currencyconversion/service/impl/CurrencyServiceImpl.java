@@ -25,7 +25,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     private final Validator<String> currencyCodeValidator = CurrencyCodeValidator.getInstance();
     private final Validator<CurrencyRequestDto> createCurrencyValidator = CurrencyRequestDtoValidator.getInstance();
 
-    public CurrencyServiceImpl() {
+    private CurrencyServiceImpl() {
     }
 
     public static CurrencyServiceImpl getInstance() {
